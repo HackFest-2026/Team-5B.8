@@ -1,0 +1,233 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  background: var(--bg);
+}
+
+/* ── left: the form ───────────────────────────────────────────────────── */
+.formSide {
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-6);
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+.formWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-6) 0;
+}
+
+.form {
+  width: 100%;
+  max-width: 380px;
+}
+
+.heading {
+  font-size: var(--t-xl);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.025em;
+}
+
+.sub {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+}
+
+.submit {
+  margin-top: var(--s-5);
+}
+
+.alt {
+  margin-top: var(--s-5);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.altLink {
+  color: var(--accent-text);
+  font-weight: var(--w-medium);
+}
+
+.altLink:hover {
+  text-decoration: underline;
+}
+
+.footNote {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── step indicator ───────────────────────────────────────────────────── */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-5);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--text-muted);
+}
+
+.stepDot {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepActive {
+  color: var(--text);
+}
+
+.stepActive .stepDot {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+  font-weight: var(--w-semi);
+}
+
+.stepDone .stepDot {
+  background: var(--success-muted);
+  border-color: var(--success);
+  color: var(--success-text);
+}
+
+.stepLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 36px;
+}
+
+/* ── right: the panel ─────────────────────────────────────────────────── */
+
+/* Not an illustration — a quiet restatement of what the product does, on a
+   faint grid. The spec asks for "subtle animated background only". */
+.aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-5);
+  padding: var(--s-8);
+  background: var(--bg-subtle);
+  border-left: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.asideGrid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 70% at 60% 45%, #000 10%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 60% 45%, #000 10%, transparent 72%);
+}
+
+.asideInner {
+  position: relative;
+  max-width: 380px;
+}
+
+.asideQuote {
+  font-size: var(--t-lg);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.asideBody {
+  margin-top: var(--s-4);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.asideList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+.asideItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.asideCheck {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+@media (max-width: 920px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .aside {
+    display: none;
+  }
+}
+
+/* ── onboarding: wider, two columns of fields ─────────────────────────── */
+.wideForm {
+  max-width: 560px;
+}
+
+.ready {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-4);
+  padding: var(--s-7) 0;
+}
+
+.readyIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-full);
+  background: var(--success-muted);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  color: var(--success-text);
+}

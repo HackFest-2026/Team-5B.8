@@ -1,0 +1,284 @@
+/* ============================================================================
+   DevNexus — design tokens
+   ============================================================================
+
+   Dark is the primary identity. Both themes are defined here and NOTHING in the
+   application may reach for a raw colour: every surface, border and text colour
+   resolves through these variables, so a theme switch is total rather than
+   patchy.
+
+   The palette is deliberately black / graphite / grey / white. The accent is a
+   restrained amber — warm, instrument-panel, closer to financial terminal than
+   to the blue-purple gradient every AI product ships. It appears only on active
+   navigation, the primary action, and status. If the accent is visible in more
+   than a few places on a screen, that screen is wrong.
+
+   Semantic status colours are muted on purpose. A critical alert should read as
+   serious, not as a toy notification badge.
+   ========================================================================= */
+
+:root {
+  /* ── spacing: a 4px rhythm ─────────────────────────────────────────── */
+  --s-1: 0.25rem;   /*  4px */
+  --s-2: 0.5rem;    /*  8px */
+  --s-3: 0.75rem;   /* 12px */
+  --s-4: 1rem;      /* 16px */
+  --s-5: 1.5rem;    /* 24px */
+  --s-6: 2rem;      /* 32px */
+  --s-7: 3rem;      /* 48px */
+  --s-8: 4rem;      /* 64px */
+  --s-9: 6rem;      /* 96px */
+  --s-10: 8rem;     /* 128px */
+
+  /* ── radii: tight. Pill-shaped cards read as consumer, not infrastructure */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+  --r-full: 999px;
+
+  /* ── type ──────────────────────────────────────────────────────────── */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
+  /* Monospace is for identifiers and measurements ONLY — keys, decision ids,
+     latencies, endpoints, code. Never for prose or labels. */
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, "Menlo", monospace;
+
+  --t-xs: 0.6875rem;   /* 11px — table meta, badges */
+  --t-sm: 0.8125rem;   /* 13px — secondary, dense UI */
+  --t-base: 0.9375rem; /* 15px — body */
+  --t-md: 1.0625rem;   /* 17px */
+  --t-lg: 1.375rem;    /* 22px — section heads */
+  --t-xl: 1.875rem;    /* 30px */
+  --t-2xl: 2.5rem;     /* 40px */
+  --t-3xl: 3.5rem;     /* 56px — hero only */
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-normal: 1.6;
+
+  --w-normal: 400;
+  --w-medium: 500;
+  --w-semi: 560;
+  --w-bold: 650;
+
+  /* Numerals must line up in columns and not wobble as values change. */
+  --num: "tnum" 1, "lnum" 1;
+
+  /* ── motion: communicates state, never decorates ───────────────────── */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-fast: 120ms;
+  --d-base: 200ms;
+  --d-slow: 340ms;
+
+  --z-sticky: 100;
+  --z-nav: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  --sidebar-w: 236px;
+  --sidebar-w-collapsed: 60px;
+  --topbar-h: 56px;
+  --max-content: 1360px;
+  --max-prose: 680px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DARK — the primary identity
+   ────────────────────────────────────────────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0a0a0b;            /* near-black, not pure black: pure black bleeds
+                               on OLED and makes borders invisible */
+  --bg-subtle: #0e0e10;
+  --surface: #141416;       /* cards, panels */
+  --surface-raised: #1a1a1d;/* popovers, dropdowns, modals */
+  --surface-sunken: #080809;/* code blocks, wells, table headers */
+  --surface-hover: #1f1f23;
+  --surface-active: #26262b;
+
+  --border: #232327;        /* default hairline */
+  --border-strong: #32323a; /* inputs, emphasised separation */
+  --border-subtle: #1a1a1e; /* inside dense tables */
+
+  --text: #f4f4f5;          /* off-white; pure white is harsh at 15px */
+  --text-secondary: #a1a1aa;
+  --text-muted: #6b6b74;
+  --text-inverse: #0a0a0b;
+
+  --accent: #e8a33d;
+  --accent-hover: #f0b355;
+  --accent-muted: rgba(232, 163, 61, 0.14);
+  --accent-border: rgba(232, 163, 61, 0.32);
+  --accent-text: #f0b355;
+
+  --success: #4ea172;
+  --success-muted: rgba(78, 161, 114, 0.14);
+  --success-text: #6abd8d;
+
+  --warning: #d99a2b;
+  --warning-muted: rgba(217, 154, 43, 0.14);
+  --warning-text: #e5ab45;
+
+  --critical: #d2544f;
+  --critical-muted: rgba(210, 84, 79, 0.14);
+  --critical-text: #e5726d;
+
+  --info: #5a8fb5;
+  --info-muted: rgba(90, 143, 181, 0.14);
+  --info-text: #74a4c7;
+
+  --disabled-bg: #17171a;
+  --disabled-text: #4a4a52;
+
+  --focus-ring: rgba(232, 163, 61, 0.5);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+
+  /* Used sparingly: hero overlays, floating nav, live panels. NOT every card. */
+  --glass-bg: rgba(20, 20, 22, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.07);
+
+  --grid-line: rgba(255, 255, 255, 0.035);
+
+  /* Charts: a graphite-to-amber ramp that stays distinguishable in both themes
+     and never resorts to a rainbow. */
+  --chart-1: #e8a33d;
+  --chart-2: #8a8a95;
+  --chart-3: #4ea172;
+  --chart-4: #5a8fb5;
+  --chart-5: #b07d9c;
+  --chart-6: #c2763f;
+  --chart-grid: rgba(255, 255, 255, 0.06);
+  --chart-axis: #4a4a52;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   LIGHT
+   ────────────────────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --bg-subtle: #fafaf9;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f5f5f4;
+  --surface-hover: #f5f5f4;
+  --surface-active: #eeeeec;
+
+  --border: #e5e5e2;
+  --border-strong: #d4d4d0;
+  --border-subtle: #f0f0ee;
+
+  --text: #1c1c1e;
+  --text-secondary: #57575e;
+  --text-muted: #8a8a92;
+  --text-inverse: #ffffff;
+
+  --accent: #b7791f;
+  --accent-hover: #a06a1b;
+  --accent-muted: rgba(183, 121, 31, 0.1);
+  --accent-border: rgba(183, 121, 31, 0.28);
+  --accent-text: #92610f;
+
+  --success: #2f7d53;
+  --success-muted: rgba(47, 125, 83, 0.1);
+  --success-text: #266844;
+
+  --warning: #a9731a;
+  --warning-muted: rgba(169, 115, 26, 0.1);
+  --warning-text: #8a5e14;
+
+  --critical: #b3403b;
+  --critical-muted: rgba(179, 64, 59, 0.1);
+  --critical-text: #96332f;
+
+  --info: #3d6f94;
+  --info-muted: rgba(61, 111, 148, 0.1);
+  --info-text: #325b7a;
+
+  --disabled-bg: #f5f5f4;
+  --disabled-text: #b0b0b6;
+
+  --focus-ring: rgba(183, 121, 31, 0.4);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.1);
+
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(0, 0, 0, 0.06);
+
+  --grid-line: rgba(0, 0, 0, 0.03);
+
+  --chart-1: #b7791f;
+  --chart-2: #7a7a84;
+  --chart-3: #2f7d53;
+  --chart-4: #3d6f94;
+  --chart-5: #8d5c76;
+  --chart-6: #9c5a28;
+  --chart-grid: rgba(0, 0, 0, 0.07);
+  --chart-axis: #8a8a92;
+}
+
+/* Honour the OS preference only when the user has not chosen explicitly. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-subtle: #fafaf9;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --surface-sunken: #f5f5f4;
+    --surface-hover: #f5f5f4;
+    --surface-active: #eeeeec;
+    --border: #e5e5e2;
+    --border-strong: #d4d4d0;
+    --border-subtle: #f0f0ee;
+    --text: #1c1c1e;
+    --text-secondary: #57575e;
+    --text-muted: #8a8a92;
+    --text-inverse: #ffffff;
+    --accent: #b7791f;
+    --accent-hover: #a06a1b;
+    --accent-muted: rgba(183, 121, 31, 0.1);
+    --accent-border: rgba(183, 121, 31, 0.28);
+    --accent-text: #92610f;
+    --success: #2f7d53;
+    --success-muted: rgba(47, 125, 83, 0.1);
+    --success-text: #266844;
+    --warning: #a9731a;
+    --warning-muted: rgba(169, 115, 26, 0.1);
+    --warning-text: #8a5e14;
+    --critical: #b3403b;
+    --critical-muted: rgba(179, 64, 59, 0.1);
+    --critical-text: #96332f;
+    --info: #3d6f94;
+    --info-muted: rgba(61, 111, 148, 0.1);
+    --info-text: #325b7a;
+    --disabled-bg: #f5f5f4;
+    --disabled-text: #b0b0b6;
+    --focus-ring: rgba(183, 121, 31, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.78);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --grid-line: rgba(0, 0, 0, 0.03);
+    --chart-1: #b7791f;
+    --chart-2: #7a7a84;
+    --chart-3: #2f7d53;
+    --chart-4: #3d6f94;
+    --chart-5: #8d5c76;
+    --chart-6: #9c5a28;
+    --chart-grid: rgba(0, 0, 0, 0.07);
+    --chart-axis: #8a8a92;
+  }
+}

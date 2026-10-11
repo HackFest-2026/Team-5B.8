@@ -1,0 +1,607 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--bg);
+  transition: grid-template-columns var(--d-base) var(--e-out);
+}
+
+.shellCollapsed {
+  grid-template-columns: var(--sidebar-w-collapsed) minmax(0, 1fr);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════════════════════════════════════ */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-subtle);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  height: var(--topbar-h);
+  padding: 0 var(--s-4);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.collapseBtn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.collapseBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--s-3) var(--s-2);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.navGroupLabel {
+  padding: var(--s-4) var(--s-3) var(--s-2);
+  font-size: 10px;
+  font-weight: var(--w-semi);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Tight, 30px rows. The spec is explicit: no giant sidebar items. */
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  height: 30px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-sm);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.navItem:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* The one accented element in the chrome. An active row is the answer to
+   "where am I?", so it is unmistakable and nothing else competes with it. */
+.navItemActive {
+  background: var(--accent-muted);
+  color: var(--accent-text);
+  font-weight: var(--w-medium);
+}
+
+.navItemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.navIcon {
+  flex-shrink: 0;
+}
+
+.navLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navBadge {
+  margin-left: auto;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  background: var(--critical);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── collapsed mode ───────────────────────────────────────────────────── */
+.collapsed .navItem {
+  justify-content: center;
+  padding: 0;
+}
+
+.collapsed .navLabel,
+.collapsed .navGroupLabel,
+.collapsed .navBadge {
+  display: none;
+}
+
+/* A dot instead of a count when collapsed: there is no room for a number, but
+   the user still has to know something needs attention. */
+.collapsed .navItemAlert::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--critical);
+}
+
+/* Tooltip for a collapsed icon. CSS-only, so there is no JS cost on hover. */
+.tip {
+  position: absolute;
+  left: calc(100% + var(--s-2));
+  top: 50%;
+  transform: translateY(-50%);
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-md);
+  font-size: var(--t-xs);
+  color: var(--text);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-fast) var(--e-out);
+  z-index: var(--z-overlay);
+}
+
+.collapsed .navItem:hover .tip,
+.collapsed .navItem:focus-visible .tip {
+  opacity: 1;
+}
+
+.sidebar:not(.collapsed) .tip {
+  display: none;
+}
+
+/* ── sidebar footer ───────────────────────────────────────────────────── */
+.sidebarFoot {
+  flex-shrink: 0;
+  padding: var(--s-2);
+  border-top: 1px solid var(--border);
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-2);
+  border-radius: var(--r-sm);
+  text-align: left;
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.userRow:hover {
+  background: var(--surface-hover);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  border: 1px solid var(--border-strong);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.userText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.userName {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userCompany {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collapsed .userText,
+.collapsed .themeRow span {
+  display: none;
+}
+
+.collapsed .userRow {
+  justify-content: center;
+}
+
+.themeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-1);
+  padding: var(--s-1);
+}
+
+.collapsed .themeRow {
+  justify-content: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MAIN
+   ══════════════════════════════════════════════════════════════════════ */
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  height: var(--topbar-h);
+  padding: 0 var(--s-5);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbarLeft,
+.topbarRight {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.content {
+  flex: 1;
+  padding: var(--s-5);
+  max-width: var(--max-content);
+  width: 100%;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+/* ── project switcher ─────────────────────────────────────────────────── */
+.switcher {
+  position: relative;
+}
+
+.switcherBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  max-width: 280px;
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.switcherBtn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+
+.switcherText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+}
+
+.switcherName {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switcherMeta {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + var(--s-2));
+  left: 0;
+  min-width: 290px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: var(--s-2);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-overlay);
+  animation: rise-in var(--d-fast) var(--e-out);
+}
+
+.menuRight {
+  left: auto;
+  right: 0;
+}
+
+.menuLabel {
+  padding: var(--s-2) var(--s-3);
+  font-size: 10px;
+  font-weight: var(--w-semi);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.menuItem:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.menuItemActive {
+  color: var(--accent-text);
+}
+
+.menuItemText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.menuItemName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuItemMeta {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuDivider {
+  height: 1px;
+  margin: var(--s-2) 0;
+  background: var(--border);
+}
+
+/* ── notification bell ────────────────────────────────────────────────── */
+.bellWrap {
+  position: relative;
+}
+
+.bellDot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--critical);
+  border: 1.5px solid var(--bg);
+}
+
+.notifList {
+  position: absolute;
+  top: calc(100% + var(--s-2));
+  right: 0;
+  width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: var(--s-2);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-overlay);
+  animation: rise-in var(--d-fast) var(--e-out);
+}
+
+.notifItem {
+  display: block;
+  width: 100%;
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  text-align: left;
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.notifItem:hover {
+  background: var(--surface-hover);
+}
+
+.notifTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.notifTitle {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  color: var(--text);
+}
+
+.notifTime {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.notifBody {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.notifEmpty {
+  padding: var(--s-5) var(--s-4);
+  text-align: center;
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Tablet: the sidebar starts collapsed to icons but stays in place. */
+@media (max-width: 1100px) {
+  .shell {
+    grid-template-columns: var(--sidebar-w-collapsed) minmax(0, 1fr);
+  }
+}
+
+/*
+  Mobile: the sidebar leaves the grid and becomes an overlay drawer. This is a
+  different navigation pattern, not a narrower version of the same one — the
+  spec explicitly asks not to simply shrink the desktop UI.
+*/
+@media (max-width: 760px) {
+  .shell,
+  .shellCollapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-w);
+    z-index: var(--z-modal);
+    transform: translateX(-100%);
+    transition: transform var(--d-base) var(--e-out);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebarOpen {
+    transform: none;
+  }
+
+  /* Collapsed-to-icons makes no sense in a drawer: it is either open or gone. */
+  .collapsed .navLabel,
+  .collapsed .navGroupLabel,
+  .collapsed .navBadge,
+  .collapsed .userText {
+    display: revert;
+  }
+
+  .collapsed .navItem {
+    justify-content: flex-start;
+    padding: 0 var(--s-3);
+  }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: rgba(0, 0, 0, 0.5);
+    animation: fade-in var(--d-fast) var(--e-out);
+  }
+
+  .content {
+    padding: var(--s-4);
+  }
+
+  .topbar {
+    padding: 0 var(--s-4);
+  }
+
+  .switcherBtn {
+    max-width: 180px;
+  }
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .mobileOnly {
+    display: grid;
+  }
+  .desktopOnly {
+    display: none;
+  }
+}

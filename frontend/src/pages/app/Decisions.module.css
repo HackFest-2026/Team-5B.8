@@ -1,0 +1,278 @@
+/* ── replay panel ─────────────────────────────────────────────────────── */
+.priceHeadline {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+
+.priceMain {
+  font-size: var(--t-2xl);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceFrom {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.changeUp {
+  color: var(--success-text);
+}
+
+.changeDown {
+  color: var(--critical-text);
+}
+
+/* ── the rule ledger ─────────────────────────────────────────────────── */
+
+/* Every rule the engine looked at, applied or not. Showing only the applied
+   ones would answer "what happened" but not "why didn't X happen", which is the
+   question an analyst actually brings to this screen. */
+.ruleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.rule {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.ruleApplied {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.ruleHead {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto auto;
+  gap: var(--s-3);
+  align-items: center;
+  width: 100%;
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+}
+
+.ruleToggle {
+  cursor: pointer;
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.ruleToggle:hover {
+  background: var(--surface-hover);
+}
+
+.ruleApplied .ruleToggle:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.ruleState {
+  display: grid;
+  place-items: center;
+}
+
+.stateApplied {
+  color: var(--accent);
+}
+
+.stateMatched {
+  color: var(--warning-text);
+}
+
+.stateSkipped {
+  color: var(--text-muted);
+}
+
+.ruleName {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  min-width: 0;
+}
+
+.ruleWhy {
+  margin-top: 1px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ruleImpact {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rulePriority {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── clause evaluation ───────────────────────────────────────────────── */
+.clauses {
+  padding: 0 var(--s-4) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.clause {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--s-2);
+  align-items: baseline;
+  padding: var(--s-1) 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.clauseMatched {
+  color: var(--success-text);
+}
+
+.clauseFailed {
+  color: var(--text-muted);
+}
+
+.clauseText {
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.actual {
+  color: var(--text);
+  font-weight: var(--w-medium);
+}
+
+/* ── signals used ─────────────────────────────────────────────────────── */
+.signalTable {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--s-2) var(--s-4);
+  font-size: var(--t-sm);
+  align-items: baseline;
+}
+
+.signalKey {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signalVal {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--w-medium);
+  text-align: right;
+}
+
+.signalAge {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ageStale {
+  color: var(--warning-text);
+}
+
+/* ── guardrails ───────────────────────────────────────────────────────── */
+.guardHit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  border-radius: var(--r-md);
+  background: var(--warning-muted);
+  font-size: var(--t-sm);
+}
+
+.guardArrow {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── verification ─────────────────────────────────────────────────────── */
+.verify {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.verifyPass {
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+  background: var(--success-muted);
+}
+
+.verifyFail {
+  border-color: var(--critical);
+  background: var(--critical-muted);
+}
+
+.verifyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--s-4);
+}
+
+.verifyCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.verifyLabel {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.verifyValue {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums;
+}
+
+.verifyConclusion {
+  font-size: var(--t-sm);
+  line-height: var(--lh-snug);
+}
+
+.explanation {
+  padding: var(--s-4);
+  border-left: 2px solid var(--accent);
+  background: var(--surface-sunken);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  font-size: var(--t-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}

@@ -1,0 +1,471 @@
+.fieldLabel {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  margin-bottom: var(--s-3);
+}
+
+.note {
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+/* ── template picker ──────────────────────────────────────────────────── */
+.templates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--s-3);
+}
+
+.template {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  text-align: left;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out),
+    transform var(--d-fast) var(--e-out);
+}
+
+.template:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.templateOn {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
+.templateBlank {
+  border-style: dashed;
+}
+
+.templateName {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.templateMeta {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.templateChips {
+  display: flex;
+  gap: var(--s-1);
+  flex-wrap: wrap;
+  margin-top: var(--s-1);
+}
+
+.chip {
+  padding: 1px var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* ── editable tables ──────────────────────────────────────────────────── */
+
+/* Explicit headings on every column. A grid of bare inputs makes the user
+   infer meaning from position, which they should never have to do. */
+.tableHead {
+  display: grid;
+  gap: var(--s-2);
+  padding: 0 var(--s-1) var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s-1);
+}
+
+.tableRow {
+  display: grid;
+  gap: var(--s-2);
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .tableHead { display: none; }
+  .tableRow {
+    grid-template-columns: 1fr !important;
+    padding: var(--s-3);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface-sunken);
+  }
+}
+
+.rowDelete {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  transition:
+    color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.rowDelete:hover:not(:disabled) {
+  color: var(--critical-text);
+  background: var(--critical-muted);
+}
+
+.rowDelete:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── rule builder ─────────────────────────────────────────────────────── */
+.ruleCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+/* The rule's name reads as the heading of its own card, with a labelled input
+   and a clearly-named Remove — not a bare box next to a mystery ✕. */
+.ruleCardHead {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-3);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.ruleNameField {
+  flex: 1;
+  min-width: 0;
+}
+
+/* A formula is an expression, not a short value — give it the room to read. */
+/* Plain-language reminder of what price and cost mean, right above the table. */
+.priceLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.priceLegend strong {
+  color: var(--text);
+  font-weight: var(--w-semi);
+}
+
+.ruleLineFormula {
+  grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 3fr);
+}
+
+@media (max-width: 760px) {
+  .ruleLineFormula { grid-template-columns: 1fr; }
+}
+
+.ruleLine {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: var(--s-2);
+  align-items: center;
+}
+
+.ruleLine:last-of-type {
+  grid-template-columns: 56px minmax(0, 1.6fr) minmax(0, 0.8fr);
+}
+
+@media (max-width: 760px) {
+  .ruleLine, .ruleLine:last-of-type {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* WHEN / THEN set like keywords, so the rule reads as a sentence. */
+.kw {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.1em;
+  color: var(--accent-text);
+}
+
+.sentence {
+  padding: var(--s-3) var(--s-4);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--accent-muted);
+  font-size: var(--t-sm);
+  line-height: var(--lh-snug);
+}
+
+/* ── api section ──────────────────────────────────────────────────────── */
+.apiHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+  font-size: var(--t-sm);
+}
+
+/* ── describe a rule ──────────────────────────────────────────────────────
+   Sits above the builder, visually distinct from it: the sentence is a way IN
+   to the fields, not a second way to write a rule. Whatever it produces lands
+   in the builder below for the user to check.
+   ─────────────────────────────────────────────────────────────────────────── */
+.describe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.describeHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--accent-text);
+}
+
+.describeTag {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  font-weight: var(--w-normal);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.describeError {
+  font-size: var(--t-xs);
+  color: var(--critical-text);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Scope-based schema builder (step 2)
+   ------------------------------------------------------------------------
+   Three sections — item, overall, request — so the user sees that pricing
+   information lives at different levels, not all on the product.
+   ════════════════════════════════════════════════════════════════════════ */
+.scopes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.scope {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+/* The fields every product has before you add anything. Presented as a quiet
+   grouped block — clearly "already here", not inputs waiting to be filled. */
+.builtins {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-4) 0;
+}
+
+.builtinsCaption {
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.builtinRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+}
+
+.builtinRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.builtinRemove:hover {
+  background: var(--surface);
+  color: var(--critical-text, var(--text));
+}
+
+.scopeHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.scopeIcon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-text);
+}
+
+.scopeTitle {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+.scopeBlurb {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+  max-width: 64ch;
+}
+
+.scopeTable {
+  display: flex;
+  flex-direction: column;
+}
+
+.scopeRow {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 110px 80px 80px 32px;
+  gap: var(--s-2);
+  align-items: center;
+  padding: var(--s-2) var(--s-4);
+}
+
+.scopeRow[data-head='true'] {
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: var(--s-3);
+  padding-bottom: 1px;
+}
+
+.scopeDash {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* The id of a built-in field, in a mono pill so it reads as a real field name. */
+.lockedId {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text);
+  padding: 2px var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex: none;
+}
+
+.lockedNote {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lockedIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  color: var(--text-muted);
+  flex: none;
+}
+
+.scopeFoot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-4) var(--s-4);
+  flex-wrap: wrap;
+}
+
+.scopeExamples {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+/* ── products table: dynamic item-scope columns ───────────────────────── */
+/* Horizontal scroll kicks in only once the item fields make the row wider
+   than the panel, so a two-field schema still sits flush. */
+.productScroll {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--s-1));
+  padding: 0 var(--s-1);
+}
+
+/* The real min-width is set inline from the column count, so columns keep
+   their size and the panel scrolls rather than squashing them together. */
+.productScroll .tableHead,
+.productScroll .tableRow {
+  width: max-content;
+}
+
+/* ── rules & limits step ─────────────────────────────────────────────── */
+/* The limits sit in a scope card (reusing .scope); its body holds the inputs. */
+.limitsBody {
+  padding: var(--s-4);
+}
+
+/* The "Rules —" heading that separates the limits section from the builder. */
+.rulesLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--text);
+}
+
+.rulesLabel svg { color: var(--accent-text); }

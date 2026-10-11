@@ -1,0 +1,20 @@
+# Security and caching headers for Cloudflare Pages.
+
+/*
+  # Clickjacking and MIME-sniffing protection.
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  # Do not leak the app's URL (which can contain project ids) to third parties.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # This app needs none of these; denying them removes the prompt entirely.
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Vite fingerprints every asset filename, so these can be cached hard and
+# forever — a new build produces new names rather than new contents.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# index.html must NEVER be cached: it is the file that points at the current
+# asset hashes. A stale copy would keep loading a deleted bundle after a deploy.
+/index.html
+  Cache-Control: no-cache, must-revalidate

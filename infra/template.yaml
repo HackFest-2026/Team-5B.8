@@ -1,0 +1,786 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  DevNexus — Universal Dynamic Pricing Platform.
+  Control plane (FastAPI on one Lambda) + dependency-free hot-path Lambdas +
+  SQS workers. Deployed with the plain AWS CLI; SAM CLI is not required.
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  GeminiModels:
+    Type: String
+    Default: "gemini-3.6-flash,gemini-3.5-flash,gemini-flash-latest,gemini-2.5-flash"
+    Description: >
+      Ordered fallback chain. Lives in SSM so a retired or saturated model can be
+      swapped without a redeploy — Gemini model availability is volatile.
+  CorsOrigins:
+    Type: String
+    Default: "*"
+
+  ContextStaleSeconds:
+    Type: Number
+    Default: 21600
+    Description: >
+      How old a context signal may be before the engine refuses to evaluate a
+      rule that reads it, and marks the decision degraded.
+
+      This was effectively 120 seconds (the hardcoded fallback, since nothing
+      ever set the variable), which assumed a continuous event stream. Any
+      business with a gap in traffic longer than two minutes had EVERY rule
+      skipped and silently fell back to base prices — a store quiet overnight
+      would wake up pricing as though it had no rules at all.
+
+      6 hours is the default instead: within a business day the last known
+      demand or inventory reading is still the best estimate available, and
+      pricing on it is far better than ignoring the rules entirely. Genuinely
+      ancient data still trips the flag.
+
+      Lower it for high-frequency domains (ride-hailing, energy) where a
+      six-hour-old signal really is meaningless.
+
+Globals:
+  Function:
+    Runtime: python3.12
+    # ARM64 is ~20% cheaper and measurably faster for this workload.
+    Architectures: [arm64]
+    Timeout: 29
+    MemorySize: 1024
+    Tracing: Active
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+        LOG_LEVEL: INFO
+        TABLE_CORE: !Ref CoreTable
+        TABLE_CONTEXT: !Ref ContextTable
+        TABLE_DECISIONS: !Ref DecisionsTable
+        BUCKET_DATA: !Ref DataBucket
+        QUEUE_EVENTS: !Ref EventQueue
+        QUEUE_DATA: !Ref DataQueue
+        QUEUE_DECISIONS: !Ref DecisionQueue
+        QUEUE_ALERTS: !Ref AlertQueue
+        QUEUE_BACKTEST: !Ref BacktestQueue
+        GEMINI_KEYS_PARAM: !Sub "/devnexus/${Stage}/gemini/keys"
+        GEMINI_MODELS_PARAM: !Ref GeminiModelsParam
+        FCM_SA_PARAM: !Sub "/devnexus/${Stage}/fcm/service-account"
+
+Resources:
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Storage
+  # ════════════════════════════════════════════════════════════════════
+
+  # Configuration and state. Mixed, bursty access patterns.
+  CoreTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "devnexus-core-${Stage}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: pk, AttributeType: S }
+        - { AttributeName: sk, AttributeType: S }
+      KeySchema:
+        - { AttributeName: pk, KeyType: HASH }
+        - { AttributeName: sk, KeyType: RANGE }
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  # The hot path reads ONLY this table. Kept separate from CoreTable so that an
+  # analyst running analytics can never consume capacity the pricing API needs.
+  ContextTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "devnexus-context-${Stage}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: pk, AttributeType: S }
+        - { AttributeName: sk, AttributeType: S }
+      KeySchema:
+        - { AttributeName: pk, KeyType: HASH }
+        - { AttributeName: sk, KeyType: RANGE }
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  DecisionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "devnexus-decisions-${Stage}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: pk, AttributeType: S }
+        - { AttributeName: sk, AttributeType: S }
+      KeySchema:
+        - { AttributeName: pk, KeyType: HASH }
+        - { AttributeName: sk, KeyType: RANGE }
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  DataBucket:
+    Type: AWS::S3::Bucket
+    # S3 validates its notification target at create time, so the queue policy
+    # granting s3.amazonaws.com:SendMessage must already exist. CloudFormation
+    # cannot infer this ordering from the NotificationConfiguration reference.
+    DependsOn: DataQueuePolicy
+    Properties:
+      BucketName: !Sub "devnexus-data-${Stage}-${AWS::AccountId}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      CorsConfiguration:
+        CorsRules:
+          # The browser PUTs directly here using a presigned URL — the only
+          # non-GET traffic in the whole system.
+          - AllowedMethods: [PUT]
+            AllowedOrigins: [!Ref CorsOrigins]
+            AllowedHeaders: ["*"]
+            MaxAge: 3000
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Event: s3:ObjectCreated:*
+            Queue: !GetAtt DataQueue.Arn
+            Filter:
+              S3Key:
+                Rules:
+                  - { Name: prefix, Value: uploads/ }
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireRawUploads
+            Status: Enabled
+            Prefix: uploads/
+            ExpirationInDays: 90
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Queues — every one has a DLQ, because silent message loss is worse
+  #  than a visible backlog.
+  # ════════════════════════════════════════════════════════════════════
+
+  EventDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-events-dlq-${Stage}"
+      MessageRetentionPeriod: 1209600
+
+  EventQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-events-${Stage}"
+      VisibilityTimeout: 180
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt EventDLQ.Arn
+        maxReceiveCount: 3
+
+  DataDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-data-dlq-${Stage}"
+      MessageRetentionPeriod: 1209600
+
+  DataQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-data-${Stage}"
+      # Large file processing needs headroom; must exceed the worker timeout.
+      VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DataDLQ.Arn
+        maxReceiveCount: 2
+
+  DataQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues: [!Ref DataQueue]
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Service: s3.amazonaws.com }
+            Action: sqs:SendMessage
+            Resource: !GetAtt DataQueue.Arn
+            Condition:
+              StringEquals: { "aws:SourceAccount": !Ref AWS::AccountId }
+
+  DecisionDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-decisions-dlq-${Stage}"
+      MessageRetentionPeriod: 1209600
+
+  DecisionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-decisions-${Stage}"
+      VisibilityTimeout: 180
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DecisionDLQ.Arn
+        maxReceiveCount: 3
+
+  AlertDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-alerts-dlq-${Stage}"
+      MessageRetentionPeriod: 1209600
+
+  AlertQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-alerts-${Stage}"
+      # Gemini generation plus FCM fan-out; must exceed the worker timeout.
+      VisibilityTimeout: 300
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AlertDLQ.Arn
+        maxReceiveCount: 3
+
+  BacktestDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-backtest-dlq-${Stage}"
+      MessageRetentionPeriod: 1209600
+
+  BacktestQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "devnexus-backtest-${Stage}"
+      VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BacktestDLQ.Arn
+        maxReceiveCount: 2
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Config
+  # ════════════════════════════════════════════════════════════════════
+
+  GeminiModelsParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/devnexus/${Stage}/gemini/models"
+      Type: String
+      Value: !Ref GeminiModels
+      Description: Ordered Gemini model fallback chain
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Shared dependency layer
+  # ════════════════════════════════════════════════════════════════════
+
+  DepsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "devnexus-deps-${Stage}"
+      ContentUri: ../.build/layer
+      CompatibleRuntimes: [python3.12]
+      CompatibleArchitectures: [arm64]
+
+  # ════════════════════════════════════════════════════════════════════
+  #  API Gateway
+  # ════════════════════════════════════════════════════════════════════
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      # Deliberately no StageName, so SAM uses $default and API Gateway serves
+      # paths with no stage prefix. A named stage would make every request
+      # arrive as /dev/health, which FastAPI (mounted at /) answers with a 404,
+      # and would put /dev/ in the middle of every customer-facing pricing URL.
+      # Stage separation comes from deploying a separate stack per stage.
+      CorsConfiguration:
+        AllowOrigins: [!Ref CorsOrigins]
+        AllowMethods: [GET, OPTIONS]
+        AllowHeaders: ["*"]
+        MaxAge: 600
+      # HTTP APIs throttle via DefaultRouteSettings; `Throttle` is a REST-API
+      # (AWS::Serverless::Api) property and is rejected by the SAM transform here.
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 5000
+        ThrottlingRateLimit: 10000
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogs.Arn
+        # NOTE: `routeKey` is logged, `rawQueryString` deliberately is NOT.
+        # Session tokens and API keys travel in the query string, and writing
+        # them to CloudWatch would turn the log group into a credential store.
+        Format: >-
+          {"t":"$context.requestTime","id":"$context.requestId","route":"$context.routeKey","status":"$context.status","latency":$context.responseLatency,"integrationLatency":$context.integrationLatency,"ip":"$context.identity.sourceIp"}
+
+  ApiAccessLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/apigateway/devnexus-${Stage}"
+      RetentionInDays: 14
+
+  # ════════════════════════════════════════════════════════════════════
+  #  WebSocket API — the real-time dashboard channel
+  # ════════════════════════════════════════════════════════════════════
+  #
+  # Raw ApiGatewayV2 resources: SAM has no WebSocket shorthand, only
+  # AWS::Serverless::HttpApi / Api, both of which are HTTP-only.
+
+  WebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub "devnexus-ws-${Stage}"
+      ProtocolType: WEBSOCKET
+      # Clients send {"action":"subscribe", ...}; this selects the route.
+      RouteSelectionExpression: "$request.body.action"
+
+  WebSocketIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub
+        - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Arn}/invocations"
+        - Arn: !GetAtt WebSocketFunction.Arn
+
+  WebSocketConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $connect
+      # Authorization happens inside the handler, which is the only place the
+      # token is available — API Gateway passes query-string params on the
+      # connect frame and on no frame after it.
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${WebSocketIntegration}"
+
+  WebSocketDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $disconnect
+      Target: !Sub "integrations/${WebSocketIntegration}"
+
+  WebSocketSubscribeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: subscribe
+      Target: !Sub "integrations/${WebSocketIntegration}"
+
+  WebSocketDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $default
+      Target: !Sub "integrations/${WebSocketIntegration}"
+
+  WebSocketDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - WebSocketConnectRoute
+      - WebSocketDisconnectRoute
+      - WebSocketSubscribeRoute
+      - WebSocketDefaultRoute
+    Properties:
+      ApiId: !Ref WebSocketApi
+
+  WebSocketStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref WebSocketApi
+      DeploymentId: !Ref WebSocketDeployment
+      StageName: !Ref Stage
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 500
+        ThrottlingRateLimit: 1000
+
+  WebSocketFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-ws-${Stage}"
+      CodeUri: ../backend
+      Handler: runtime.ws_handler.handler
+      MemorySize: 512
+      # 60s so the schema agent can stream a full reply within one invocation;
+      # connect/subscribe still return in milliseconds, so this is only a ceiling.
+      Timeout: 60
+      # DepsLayer for httpx — the schema agent streams from Gemini. The other
+      # routes still import only boto3 and core.
+      Layers: [!Ref DepsLayer]
+      Environment:
+        Variables:
+          # So the agent route can push streamed tokens back to the socket.
+          WS_ENDPOINT: !Sub "https://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*"
+            # Gemini keys live in SSM; the agent route reads them.
+            - Effect: Allow
+              Action: [ssm:GetParameter, ssm:GetParameters]
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/devnexus/${Stage}/*"
+
+  WebSocketInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WebSocketFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*"
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Control plane — FastAPI on one Lambda
+  # ════════════════════════════════════════════════════════════════════
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-api-${Stage}"
+      CodeUri: ../backend
+      Handler: app.main.handler
+      # 1769MB is where Lambda allocates a full second vCPU. The analytics
+      # endpoints aggregate thousands of decision rows in Python and now fan
+      # their reads out across threads, so both the compute and the concurrency
+      # want the extra core. Cost per request barely moves because duration
+      # falls by roughly as much as the price per ms rises.
+      MemorySize: 1769
+      Timeout: 29
+      Layers: [!Ref DepsLayer]
+      Environment:
+        Variables:
+          CORS_ORIGINS: !Ref CorsOrigins
+          WS_ENDPOINT: !Sub "https://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref DecisionsTable }
+        - S3CrudPolicy: { BucketName: !Sub "devnexus-data-${Stage}-${AWS::AccountId}" }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt EventQueue.QueueName }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt AlertQueue.QueueName }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt BacktestQueue.QueueName }
+        - Statement:
+            - Effect: Allow
+              Action: [ssm:GetParameter, ssm:GetParameters]
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/devnexus/${Stage}/*"
+            - Effect: Allow
+              Action: [cloudwatch:GetMetricStatistics, cloudwatch:GetMetricData]
+              Resource: "*"
+            # /analytics/pipeline reads queue depth straight from SQS rather
+            # than from CloudWatch, for an instant number instead of a lagged one.
+            - Effect: Allow
+              Action: [sqs:GetQueueAttributes]
+              Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:devnexus-*"
+      Events:
+        Any:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /{proxy+}
+            Method: GET
+        Root:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /
+            Method: GET
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Runtime plane — no FastAPI, no model access
+  # ════════════════════════════════════════════════════════════════════
+
+  PriceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-price-${Stage}"
+      CodeUri: ../backend
+      Handler: runtime.price_handler.handler
+      # More memory buys proportionally more CPU, which is the cheapest latency
+      # win available on Lambda.
+      MemorySize: 1769
+      Timeout: 10
+      Environment:
+        Variables:
+          CONTEXT_STALE_SECONDS: !Ref ContextStaleSeconds
+      # No DepsLayer: this function imports only boto3 and core.engine. Keeping
+      # the bundle tiny is what keeps cold starts low.
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBReadPolicy: { TableName: !Ref ContextTable }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt DecisionQueue.QueueName }
+      # Deliberately NO ssm:GetParameter and NO bedrock/gemini access. The hot
+      # path physically cannot reach a model, enforced by IAM rather than by
+      # code review.
+      Events:
+        Price:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/p/{project_key}/price
+            Method: GET
+        PriceBulk:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/p/{project_key}/price/bulk
+            Method: GET
+        # Basket pricing: the whole cart in one call, so rules can see cart
+        # value, line quantities and bundle membership.
+        PriceCart:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/p/{project_key}/price/cart
+            Method: GET
+
+  EventFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-event-${Stage}"
+      CodeUri: ../backend
+      Handler: runtime.event_handler.handler
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+        # Crud, not Read: /v1/u/{key}/update writes product fields straight
+        # through so the caller knows the write landed. Signals still go to SQS.
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt EventQueue.QueueName }
+      Events:
+        Event:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/t/{project_key}/event
+            Method: GET
+        EventBatch:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/t/{project_key}/event/batch
+            Method: GET
+        # One call for "this product changed" — its fields, its signals, or
+        # both. See runtime/event_handler.py for why they are one endpoint.
+        Update:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/u/{project_key}/update
+            Method: GET
+        # Project-wide signals (traffic, market demand, weather): one value for
+        # the whole project, so one write rather than one per item.
+        GlobalContext:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /v1/g/{project_key}/context
+            Method: GET
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Workers
+  # ════════════════════════════════════════════════════════════════════
+
+  FeatureWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-feature-worker-${Stage}"
+      CodeUri: ../backend
+      Handler: workers.feature_worker.handler
+      MemorySize: 1024
+      Timeout: 120
+      Environment:
+        Variables:
+          WS_ENDPOINT: !Sub "https://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt AlertQueue.QueueName }
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*"
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt EventQueue.Arn
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 2
+            # One poison message must not force redelivery of the nine good
+            # ones beside it.
+            FunctionResponseTypes: [ReportBatchItemFailures]
+            ScalingConfig:
+              MaximumConcurrency: 50
+
+  DecisionWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-decision-worker-${Stage}"
+      CodeUri: ../backend
+      Handler: workers.decision_worker.handler
+      MemorySize: 1024
+      Timeout: 120
+      Environment:
+        Variables:
+          WS_ENDPOINT: !Sub "https://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref DecisionsTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt AlertQueue.QueueName }
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*"
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DecisionQueue.Arn
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+            FunctionResponseTypes: [ReportBatchItemFailures]
+
+  AlertWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-alert-worker-${Stage}"
+      CodeUri: ../backend
+      Handler: workers.alert_worker.handler
+      MemorySize: 1024
+      # Gemini generation (~1-2s) plus FCM fan-out. This is the one worker that
+      # calls a model, and it does so BEFORE any notification is sent.
+      Timeout: 120
+      Environment:
+        Variables:
+          WS_ENDPOINT: !Sub "https://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Layers: [!Ref DepsLayer]
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - Statement:
+            - Effect: Allow
+              Action: [ssm:GetParameter, ssm:GetParameters]
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/devnexus/${Stage}/*"
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*"
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt AlertQueue.Arn
+            BatchSize: 5
+            MaximumBatchingWindowInSeconds: 5
+            FunctionResponseTypes: [ReportBatchItemFailures]
+            ScalingConfig:
+              # Cap concurrency: the Gemini key pool has finite RPM, and
+              # stampeding it would burn every key's rate limit at once.
+              MaximumConcurrency: 5
+
+  DataWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-data-worker-${Stage}"
+      CodeUri: ../backend
+      Handler: workers.data_worker.handler
+      MemorySize: 2048
+      Timeout: 900
+      Layers: [!Ref DepsLayer]
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - S3CrudPolicy: { BucketName: !Sub "devnexus-data-${Stage}-${AWS::AccountId}" }
+        - SQSSendMessagePolicy: { QueueName: !GetAtt AlertQueue.QueueName }
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DataQueue.Arn
+            BatchSize: 1
+            FunctionResponseTypes: [ReportBatchItemFailures]
+
+  BacktestWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "devnexus-backtest-worker-${Stage}"
+      CodeUri: ../backend
+      Handler: workers.backtest_worker.handler
+      MemorySize: 2048
+      Timeout: 900
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref CoreTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref ContextTable }
+        - DynamoDBReadPolicy: { TableName: !Ref DecisionsTable }
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BacktestQueue.Arn
+            BatchSize: 1
+            FunctionResponseTypes: [ReportBatchItemFailures]
+
+  # ════════════════════════════════════════════════════════════════════
+  #  Alarms
+  # ════════════════════════════════════════════════════════════════════
+
+  DLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "devnexus-${Stage}-dlq-not-empty"
+      AlarmDescription: Messages reached a dead-letter queue — something is failing repeatedly
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - { Name: QueueName, Value: !GetAtt EventDLQ.QueueName }
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  PriceLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "devnexus-${Stage}-price-latency-p99"
+      AlarmDescription: Pricing API p99 above 150ms — the hot path has regressed
+      Namespace: AWS/Lambda
+      MetricName: Duration
+      Dimensions:
+        - { Name: FunctionName, Value: !Ref PriceFunction }
+      ExtendedStatistic: p99
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 150
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL for every DevNexus API
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: !Sub "devnexus-api-url-${Stage}"
+  DocsUrl:
+    Description: Interactive OpenAPI documentation
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/docs"
+  SignupExample:
+    Description: First call to make after deploying
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/auth/signup?email=you@company.com&password=changeme123"
+  WebSocketUrl:
+    Description: Real-time dashboard channel
+    Value: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+  WebSocketExample:
+    Description: How a dashboard connects
+    Value: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}?token=SESSION_TOKEN&project_id=PROJECT_ID"
+  DataBucketName:
+    Value: !Ref DataBucket
+  CoreTableName:
+    Value: !Ref CoreTable

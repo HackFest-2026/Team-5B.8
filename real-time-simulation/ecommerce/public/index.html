@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>E-commerce · Pricing Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-domain="retail">
+<header class="topbar">
+  <div class="brand"><span class="logo">E-commerce</span><span class="dot"></span><span class="sub">Live Pricing Control</span></div>
+  <div class="status" id="status">
+    <span class="pill" id="connPill"><i class="led"></i><span id="connText">Connecting…</span></span>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="runAllBtn">▶ Run all in sequence</button>
+  </div>
+</header>
+
+</div>
+
+<section class="globals">
+  <div class="globals-head"><span>Store-wide signals</span><small>live · pushed to the engine</small></div>
+  <div class="gtiles" id="gtiles"></div>
+</section>
+
+<main class="layout2">
+  <section class="panel products-panel">
+    <div class="panel-head"><h2>Catalogue</h2><small id="reqLabel"></small></div>
+    <div class="grid" id="productGrid"></div>
+  </section>
+  <aside class="panel scenarios">
+    <div class="panel-head"><h2>Test scenarios</h2><small>press Run · it's real</small></div>
+    <div class="cases" id="cases"></div>
+  </aside>
+</main>
+
+<div class="loading" id="loading"><div class="spinner"></div><p>Loading live catalogue…</p></div>
+<script src="app.js"></script>
+</body>
+</html>

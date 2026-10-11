@@ -1,0 +1,164 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Pricing switch
+   ------------------------------------------------------------------------
+   The whole strategy lifecycle, reduced to the only question an operator
+   actually asks: is dynamic pricing on?
+   ════════════════════════════════════════════════════════════════════════ */
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  margin: var(--s-3);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  transition:
+    border-color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out);
+}
+
+.wrapOn {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.state {
+  margin-top: 1px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── the switch itself ────────────────────────────────────────────────── */
+.track {
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition:
+    background-color var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out);
+}
+
+.trackOn {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.track:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--r-full);
+  background: var(--text-secondary);
+  display: grid;
+  place-items: center;
+  /* A spring, so the throw feels mechanical rather than linear. */
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.4, 0.5, 1),
+    background-color var(--d-base) var(--e-out);
+}
+
+.knobOn {
+  transform: translateX(18px);
+  background: var(--text-inverse);
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knob { transition: none; }
+}
+
+/* ── collapsed sidebar ────────────────────────────────────────────────── */
+.compact {
+  justify-content: center;
+  padding: var(--s-3) 0;
+}
+
+.compact .text {
+  display: none;
+}
+
+/* ── top bar form ─────────────────────────────────────────────────────────
+   In the bar the control has to be small, legible against a glass background,
+   and clearly a switch rather than a status chip — so the track keeps its full
+   contrast while everything around it shrinks.
+   ─────────────────────────────────────────────────────────────────────────── */
+.inline {
+  gap: var(--s-3);
+  padding: 0 var(--s-2) 0 var(--s-3);
+  margin: 0;
+  height: 32px;
+  border-radius: var(--r-full);
+  background: var(--surface-sunken);
+}
+
+.inline.wrapOn {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.inline .text { flex: none; }
+
+.inlineLabel {
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.inline.wrapOn .inlineLabel { color: var(--accent-text); }
+
+.inline .track {
+  width: 34px;
+  height: 19px;
+}
+
+.inline .knob {
+  width: 14px;
+  height: 14px;
+  top: 1.5px;
+  left: 1.5px;
+}
+
+.inline .knobOn { transform: translateX(15px); }
+
+/* Below this the bar is already tight with the project switcher; the control
+   stays reachable from the project's settings screen. */
+@media (max-width: 720px) {
+  .inline { display: none; }
+}

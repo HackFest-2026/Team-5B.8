@@ -1,0 +1,183 @@
+/* The default surface for everything in the app shell. Solid, hairline border,
+   no shadow — the spec asks for "solid premium surfaces with subtle borders",
+   and a shadow on every card creates visual noise at dashboard density. */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.padded {
+  padding: var(--s-5);
+}
+
+.paddedSm {
+  padding: var(--s-4);
+}
+
+.flush {
+  padding: 0;
+}
+
+/* Only for cards that are themselves links or buttons. A hover effect on a
+   static card promises an interaction that is not there. */
+.interactive {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out),
+    transform var(--d-base) var(--e-out);
+}
+
+.interactive:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.accented {
+  border-color: var(--accent-border);
+}
+
+.critical {
+  border-color: var(--critical);
+  background: var(--critical-muted);
+}
+
+/* ── header ───────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerBare {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.titleGroup {
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin-top: 2px;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+}
+
+.body {
+  padding: var(--s-5);
+}
+
+.bodyTight {
+  padding: var(--s-4);
+}
+
+/* ── section heading, outside a card ──────────────────────────────────── */
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-4);
+}
+
+.sectionTitle {
+  font-size: var(--t-md);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.015em;
+}
+
+.sectionNote {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+/* ── metric ───────────────────────────────────────────────────────────── */
+
+/* auto-fit rather than fixed columns: the dashboard shows 4-6 KPIs and the
+   same component is reused for 2 or 3 elsewhere, and neither should leave a
+   row of gaps. */
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--s-3);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.metricValue {
+  font-size: var(--t-xl);
+  font-weight: var(--w-semi);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.metricFoot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Up is not automatically good. Revenue up is good; latency up is not — so the
+   caller chooses the tone and these only render it. */
+.up {
+  color: var(--success-text);
+}
+
+.down {
+  color: var(--critical-text);
+}
+
+.flat {
+  color: var(--text-muted);
+}

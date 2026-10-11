@@ -1,0 +1,188 @@
+/* ════════════════════════════════════════════════════════════════════════
+   API directory
+   ------------------------------------------------------------------------
+   Grouped by job rather than listed alphabetically. The two hot-path groups
+   open on arrival because they are what someone integrates first; the rest
+   stay folded so the page reads as "two endpoints and some admin" — which is
+   the truth — instead of a wall of twelve URLs.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.group {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--d-base) var(--e-out);
+}
+
+.groupOpen { border-color: var(--border-strong); }
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-4);
+  text-align: left;
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.groupHead:hover { background: var(--surface-sunken); }
+
+.groupIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--accent-text);
+}
+
+.groupText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--text-muted);
+}
+
+.groupBlurb {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+/* Which credential a group takes is the single most important thing to get
+   right, so it is on the header rather than buried in a note. */
+.authTag {
+  flex: none;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.authKey {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+.authToken {
+  border: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.chev {
+  flex: none;
+  color: var(--text-muted);
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.chevOpen { transform: rotate(180deg); }
+
+/* ── entries ──────────────────────────────────────────────────────────── */
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background: var(--surface-sunken);
+}
+
+.entryTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.method {
+  padding: 1px var(--s-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.entryName {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.path {
+  display: block;
+  overflow-x: auto;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+  color: var(--accent-text);
+}
+
+/* The host is the same on every line, so it recedes and the path stands out. */
+.pathBase { color: var(--text-muted); }
+
+.purpose {
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+.note svg { margin-top: 2px; flex: none; }

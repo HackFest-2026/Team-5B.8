@@ -1,0 +1,140 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-weight: var(--w-medium);
+  font-size: var(--t-sm);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out),
+    transform var(--d-fast) var(--e-out);
+}
+
+.btn:active:not(:disabled) {
+  /* 1px, not a scale. A button that shrinks reads as a toy; a button that
+     depresses reads as a control. */
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  background: var(--disabled-bg);
+  border-color: transparent;
+  color: var(--disabled-text);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── sizes ────────────────────────────────────────────────────────────── */
+.sm {
+  height: 28px;
+  padding: 0 var(--s-3);
+  font-size: var(--t-xs);
+}
+
+.md {
+  height: 34px;
+  padding: 0 var(--s-4);
+}
+
+.lg {
+  height: 42px;
+  padding: 0 var(--s-5);
+  font-size: var(--t-base);
+}
+
+/* ── variants ─────────────────────────────────────────────────────────── */
+
+/* The accent is reserved for the ONE action a screen wants. If two primaries
+   appear together, the screen has no primary. */
+.primary {
+  background: var(--accent);
+  color: var(--text-inverse);
+  font-weight: var(--w-semi);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.secondary {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--text-muted);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Rollback, pause, anything that changes what live traffic is priced with.
+   Outlined rather than filled: a wall of red buttons stops meaning "careful",
+   and a filled destructive button invites the click it should discourage. */
+.danger {
+  background: transparent;
+  border-color: var(--critical);
+  color: var(--critical-text);
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--critical-muted);
+  border-color: var(--critical);
+}
+
+/* Confirmed destructive action, inside a confirmation dialog only. */
+.dangerSolid {
+  background: var(--critical);
+  color: #fff;
+  font-weight: var(--w-semi);
+}
+
+.dangerSolid:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* ── layout modifiers ─────────────────────────────────────────────────── */
+.block {
+  width: 100%;
+}
+
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.iconOnly.sm {
+  width: 28px;
+}
+
+.iconOnly.md {
+  width: 34px;
+}
+
+.iconOnly.lg {
+  width: 42px;
+}
+
+/* While pending, the label stays put and the spinner replaces the leading
+   icon slot — the button must not change width mid-click and shift the layout
+   under the user's cursor. */
+.spinner {
+  display: inline-flex;
+}

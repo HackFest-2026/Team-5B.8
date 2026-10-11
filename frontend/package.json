@@ -1,0 +1,28 @@
+{
+  "name": "devnexus-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "DevNexus — Universal Dynamic Pricing Platform. Analyst web application.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "//deploy": "Builds, strips the sourcemaps from dist, then publishes. The maps are written for local debugging but must not be uploaded: they are 3.3MB of the 4.2MB output and they publish the full source.",
+    "deploy": "npm run build && find dist -name '*.map' -delete && wrangler pages deploy dist --project-name=devnexus --branch=main --commit-dirty=true"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  }
+}

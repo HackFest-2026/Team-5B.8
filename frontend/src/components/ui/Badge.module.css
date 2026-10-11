@@ -1,0 +1,138 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: 2px var(--s-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Lifecycle states are uppercase and tracked out: DRAFT / SHADOW / ACTIVE read
+   as system states rather than as prose. */
+.caps {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--w-semi);
+  font-size: 10px;
+}
+
+.neutral {
+  background: var(--surface-hover);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+.accent {
+  background: var(--accent-muted);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+
+.success {
+  background: var(--success-muted);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+  color: var(--success-text);
+}
+
+.warning {
+  background: var(--warning-muted);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+  color: var(--warning-text);
+}
+
+.critical {
+  background: var(--critical-muted);
+  border-color: color-mix(in srgb, var(--critical) 40%, transparent);
+  color: var(--critical-text);
+}
+
+.info {
+  background: var(--info-muted);
+  border-color: color-mix(in srgb, var(--info) 35%, transparent);
+  color: var(--info-text);
+}
+
+/* ── live connection indicator ────────────────────────────────────────── */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  flex-shrink: 0;
+  background: var(--text-muted);
+}
+
+/* Only the connected state animates. A pulsing dot while offline would be the
+   interface lying about the feed being alive. */
+.dotConnected {
+  background: var(--success);
+  animation: pulse-dot 2s var(--e-in-out) infinite;
+}
+
+.dotConnecting {
+  background: var(--warning);
+  animation: pulse-dot 1s var(--e-in-out) infinite;
+}
+
+.dotOffline {
+  background: var(--text-muted);
+}
+
+/* ── lifecycle rail ──────────────────────────────────────────────────── */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.stage {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stage:first-child {
+  border-radius: var(--r-md) 0 0 var(--r-md);
+}
+
+.stage:last-child {
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+
+.stage + .stage {
+  border-left: none;
+}
+
+.stageDone {
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+}
+
+.stageCurrent {
+  color: var(--text-inverse);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: var(--w-semi);
+}

@@ -1,0 +1,1730 @@
+Absolutely. Based on the **AS-BUILT DevNexus system reference you provided**, I would give the React/Gs prompt enough detail that the website builder understands this is a **real product interface for an already-built backend**, not a generic AI SaaS dashboard. The source describes DevNexus as a multi-tenant, industry-agnostic Dynamic Pricing as a Service platform, with the journey from signup through project configuration, testing, activation, live pricing, monitoring, alerts, decisions and rollback. Pasted text
+
+Here is the prompt I would use:
+
+---
+
+# DEVNEXUS — MASTER WEBSITE / WEB APP DESIGN PROMPT
+
+```text
+Build a complete, production-quality React website and web application for:
+
+DEVNEXUS
+Universal Dynamic Pricing Platform
+
+This is NOT a generic AI SaaS landing page.
+
+This is a serious, modern B2B infrastructure product for business analysts who configure, test, deploy and operate real-time dynamic pricing strategies across different industries.
+
+The backend already exists and is live. The frontend must be designed around the actual product capabilities and user journey described below.
+
+The final result must feel like a premium product that could realistically be shown to judges, customers, investors and technical teams.
+
+==================================================
+1. CORE DESIGN PHILOSOPHY
+==================================================
+
+Design language:
+
+- Extremely professional
+- Modern
+- Minimal
+- Premium
+- Calm
+- Technical but approachable
+- High information density without visual clutter
+- Strong typography
+- Excellent spacing
+- Subtle motion
+- High-quality interactions
+- No unnecessary decorative elements
+
+DO NOT make it look like:
+
+- a generic AI startup
+- a crypto dashboard
+- a developer documentation website
+- an overly futuristic cyberpunk product
+- a template SaaS dashboard
+- an "AI agency" website
+- a blue/purple gradient AI product
+
+Absolutely avoid the common:
+- neon blue
+- purple gradients
+- cyan glow
+- excessive glass effects
+- excessive rounded cards
+- excessive animations
+- giant gradient text
+- floating blobs
+- meaningless AI illustrations
+
+The product should feel closer to:
+premium infrastructure software + modern financial technology + high-end developer platform.
+
+==================================================
+2. COLOR SYSTEM
+==================================================
+
+Provide BOTH:
+
+A. DARK MODE
+B. LIGHT MODE
+
+Dark mode should be the primary visual identity.
+
+Dark theme:
+
+- near-black background
+- charcoal surfaces
+- graphite panels
+- white / off-white primary text
+- muted grey secondary text
+- subtle borders
+- very restrained accent color
+- no blue/purple AI gradient
+
+Think:
+black / graphite / grey / white.
+
+Light mode:
+
+- white primary background
+- soft off-white sections
+- charcoal text
+- subtle grey borders
+- very restrained accent
+
+The accent color should be used sparingly for:
+- active navigation
+- important status
+- primary CTA
+- success / warning / critical states
+
+Do not let the accent dominate the interface.
+
+Create a proper design token system so dark/light mode affects the entire application consistently.
+
+Include:
+- background
+- surface
+- elevated surface
+- border
+- primary text
+- secondary text
+- muted text
+- accent
+- success
+- warning
+- critical
+- hover
+- active
+- disabled
+
+==================================================
+3. TYPOGRAPHY
+==================================================
+
+Use a premium modern sans-serif.
+
+Prioritize:
+- readability
+- hierarchy
+- compact professional UI
+- excellent numerical typography
+
+Large headings should be confident but not oversized.
+
+Dashboard numbers should feel precise and technical.
+
+Use monospace typography selectively for:
+- API endpoints
+- API keys
+- IDs
+- decision IDs
+- latency
+- technical metrics
+- code snippets
+
+Do NOT use monospace everywhere.
+
+==================================================
+4. LANDING PAGE
+==================================================
+
+The landing page should NOT explain AWS architecture.
+
+It should sell the PRODUCT.
+
+The visitor should understand within seconds:
+
+"What is DevNexus?"
+
+Core message:
+
+"Configure, test, deploy and operate real-time pricing strategies for any business domain."
+
+Supporting idea:
+
+"One pricing engine. Any business domain."
+
+The landing page should tell a visual story as the user scrolls.
+
+Use scroll-triggered animations, but keep them elegant and subtle.
+
+==================================================
+5. HERO / LAUNCH SCREEN
+==================================================
+
+Opening screen:
+
+DEVNEXUS
+
+Universal Dynamic Pricing Platform
+
+Headline:
+
+"Dynamic pricing, built to operate."
+
+Alternative supporting line:
+
+"Configure pricing strategies, test them safely, launch them through an API, and watch every decision happen in real time."
+
+Primary CTA:
+
+"Get Started"
+
+Secondary CTA:
+
+"Explore the Platform"
+
+Do not use:
+"AI-powered"
+"Revolutionary AI"
+"Next generation AI"
+"Intelligent AI"
+
+The product is bigger than AI.
+
+Hero visual:
+
+A sophisticated abstract representation of:
+
+Business Context
+        ↓
+Pricing Strategy
+        ↓
+Decision
+        ↓
+Price
+
+Use animated lines / nodes / subtle data movement.
+
+This should look like a pricing infrastructure system, not a neural network.
+
+==================================================
+6. LANDING PAGE STORYTELLING
+==================================================
+
+As the user scrolls, reveal the product progressively.
+
+SECTION 1:
+"One engine. Every domain."
+
+Show multiple industries flowing into the same engine:
+
+E-commerce
+Hospitality
+Transportation
+Travel
+EV Charging
+Car Rental
+Co-working
+Banking
+Parking
+
+Visual:
+
+multiple inputs → ONE DevNexus engine → dynamic price.
+
+Emphasize:
+
+"New domains are configuration, not code changes."
+
+DevNexus has one industry-agnostic engine. The actual backend engine contains no hardcoded hotel/product/ride logic and evaluates schema-defined signals. Use this concept visually, not as a huge technical paragraph.
+
+==================================================
+7. SECTION: FROM BUSINESS DATA TO PRICE
+==================================================
+
+Create an elegant animated flow:
+
+Historical Data
++
+Real-Time Events
++
+Business Rules
++
+Strategy
++
+Guardrails
+        ↓
+Pricing Engine
+        ↓
+Dynamic Price
+
+Explain each stage with very short copy.
+
+Historical data:
+"Understand past behaviour and test strategies."
+
+Real-time events:
+"React to what is happening now."
+
+Rules:
+"Encode business decisions."
+
+Guardrails:
+"Never let pricing move beyond safe boundaries."
+
+Engine:
+"Deterministic. Fast. Reproducible."
+
+==================================================
+8. SECTION: CONFIGURE
+==================================================
+
+Show the actual product workflow.
+
+Headline:
+
+"Configure pricing without rewriting your application."
+
+Visualize:
+
+1. Domain
+2. Attributes
+3. Context signals
+4. Items
+5. Rules
+6. Guardrails
+7. Strategy
+
+Use a polished interactive mock UI.
+
+Show examples such as:
+
+Hospitality
+Occupancy
+Availability
+Competitor Price
+
+E-commerce
+Demand
+Inventory
+Conversion Rate
+
+Transportation
+Demand
+Driver Supply
+Traffic
+
+Also demonstrate a custom domain.
+
+Do not imply these are hardcoded domains.
+
+Explain:
+
+"Templates get you started. Your schema defines what the engine understands."
+
+==================================================
+9. SECTION: TEST BEFORE YOU LAUNCH
+==================================================
+
+This is an important differentiator.
+
+Show:
+
+DRAFT
+↓
+VALIDATE
+↓
+WHAT-IF
+↓
+BACKTEST
+↓
+SHADOW
+↓
+ACTIVE
+
+Make this feel like a controlled deployment pipeline.
+
+Do NOT make it look like CI/CD.
+
+It is a pricing strategy lifecycle.
+
+Show a what-if example:
+
+Current:
+₹5,000
+
+Scenario:
+Occupancy 95%
+Availability 5%
+
+Simulated:
+₹5,400
+
+Show:
+Rule triggered
+Guardrail status
+Price difference
+
+Then show:
+
+"Run the same strategy against historical data."
+
+Then:
+
+"Shadow it against live traffic without affecting customers."
+
+==================================================
+10. SECTION: GO LIVE
+==================================================
+
+Show how easy integration is.
+
+Headline:
+
+"One API call to get the price."
+
+Display a beautiful code block:
+
+GET /v1/p/{project_key}/price?item_id=R204
+
+Then response:
+
+{
+  "price": 5400,
+  "currency": "INR",
+  "decision_id": "...",
+  "changed": true
+}
+
+Also show the event side:
+
+GET /v1/t/{project_key}/event
+?item_id=R204
+&event_type=booking
+&event_id=...
+
+Visually explain:
+
+Business Application
+        ↓
+     Events
+        ↓
+    DevNexus
+        ↓
+Dynamic Price
+        ↓
+Business Application
+
+Keep the code example clean.
+
+==================================================
+11. SECTION: REAL-TIME
+==================================================
+
+Show an elegant live simulation.
+
+Example:
+
+25 bookings
+↓
+Occupancy increases
+↓
+Demand increases
+↓
+Pricing strategy evaluates
+↓
+₹5,000 → ₹5,400
+
+The dashboard should visibly update.
+
+Use subtle streaming animation.
+
+Do not create a fake "hacker terminal".
+
+Show meaningful business signals:
+
+Demand
+Occupancy
+Availability
+Inventory
+Conversion
+Competitor Gap
+
+Then show the resulting price.
+
+==================================================
+12. SECTION: EXPLAINABILITY
+==================================================
+
+Headline:
+
+"Every price has a reason."
+
+Show:
+
+₹5,400
+
+Why?
+
+High occupancy + low availability
++8%
+
+Guardrails:
+Maximum increase: 10%
+Status: Passed
+
+Strategy:
+v3
+
+Decision:
+DEC-CC90CFFCA2
+
+Then show a "Replay Decision" interaction.
+
+The user should understand that DevNexus can reproduce the exact decision.
+
+Do not say:
+"AI explains the price."
+
+The explanation is deterministic.
+
+==================================================
+13. SECTION: SAFETY
+==================================================
+
+Show pricing guardrails visually.
+
+Example:
+
+Minimum price: ₹4,000
+Maximum price: ₹7,000
+Maximum increase: 10%
+Maximum decrease: 15%
+Minimum margin: 12%
+
+Show a price trying to exceed the limit and being safely clamped.
+
+Message:
+
+"Rules decide. Guardrails protect."
+
+This should be one of the strongest visual sections.
+
+==================================================
+14. SECTION: OPERATE
+==================================================
+
+Show that DevNexus is not just a pricing calculator.
+
+It is an operational platform.
+
+Show:
+
+Live events
+Live decisions
+KPIs
+Alerts
+Pipeline health
+API health
+Strategy status
+
+Use a sophisticated dashboard preview.
+
+Show WebSocket-powered live updates visually.
+
+Channels:
+
+Events
+Decisions
+KPIs
+Alerts
+Health
+
+Do not overwhelm the user with all technical details.
+
+==================================================
+15. SECTION: CONTROL
+==================================================
+
+Show an incident scenario.
+
+Example:
+
+"Demand anomaly detected."
+
+Then:
+
+Alert
+↓
+Question
+↓
+Recommended actions
+
+Buttons:
+
+Rollback to v2
+Pause Strategy
+Keep Monitoring
+
+Explain:
+
+"Critical pricing decisions can be reviewed and controlled before they become incidents."
+
+Show rollback as a single unmistakable action.
+
+==================================================
+16. SECTION: WHY DEVNEXUS
+==================================================
+
+Do NOT create generic marketing claims.
+
+Use concise product-specific points:
+
+One engine across domains
+Configuration-driven pricing
+Real-time context
+Deterministic decisions
+Backtest before launch
+Shadow without customer impact
+Explainable decisions
+Guardrails
+Instant rollback
+Low-latency API
+Live operational visibility
+
+Avoid huge text blocks.
+
+==================================================
+17. LOGIN PAGE
+==================================================
+
+After landing page:
+
+Login
+
+Email
+Password
+
+"Sign in"
+
+Minimal.
+
+No unnecessary illustrations.
+
+Dark/light theme remains consistent.
+
+Subtle animated background only.
+
+==================================================
+18. SIGNUP FLOW
+==================================================
+
+Signup should feel like onboarding, not a boring form.
+
+STEP 1:
+Create your account
+
+Name
+Work email
+Password
+
+Then:
+
+STEP 2:
+Tell us about your business
+
+Company name
+Industry
+Currency
+Country
+Company size
+
+The backend supports service types including:
+
+E-commerce
+Hospitality
+Transportation
+Travel
+Banking
+Logistics
+Entertainment
+Energy
+Healthcare
+SaaS
+Rentals
+Other
+
+After completion:
+
+"Your pricing workspace is ready."
+
+Then guide them into project creation.
+
+==================================================
+19. APPLICATION SHELL
+==================================================
+
+After login, use a premium application shell.
+
+LEFT SIDEBAR:
+
+DevNexus logo
+
+Overview
+Projects
+Live
+Analytics
+Decisions
+Strategies
+Simulation
+Data
+Rules
+Alerts
+Audit
+API
+Settings
+
+The sidebar must be:
+
+- collapsible
+- keyboard accessible
+- smooth
+- icon + label when expanded
+- icons only when collapsed
+- tooltips when collapsed
+
+Do not use giant sidebar items.
+
+Keep spacing tight and professional.
+
+At bottom:
+
+Theme toggle
+User profile
+Company
+
+Top bar:
+
+Current Project selector
+Environment/status
+Live connection indicator
+Notifications
+Profile
+
+==================================================
+20. DASHBOARD
+==================================================
+
+Dashboard should immediately answer:
+
+"Is my pricing system healthy?"
+
+Top area:
+
+Project:
+ABC Hotels
+
+Status:
+ACTIVE
+
+Strategy:
+Dynamic Demand v3
+
+Live API:
+Healthy
+
+Then KPI cards:
+
+Current Revenue
+Average Price
+Price Changes
+Orders
+Demand
+Margin
+API Latency
+
+Do not show 20 KPI cards.
+
+Show 4-6 most important metrics first.
+
+Use a clean responsive grid.
+
+==================================================
+21. LIVE DASHBOARD
+==================================================
+
+This should be one of the most impressive screens.
+
+Header:
+
+LIVE
+
+Status:
+Connected
+
+Display:
+
+Live Price Changes
+Incoming Events
+Demand Signals
+Alerts
+
+Use a central timeline.
+
+Example:
+
+10:42:08
+Booking received
+Room R204
+
+10:42:10
+Occupancy 82% → 88%
+
+10:42:11
+Rule "High Demand" triggered
+
+10:42:11
+Price ₹5,000 → ₹5,400
+
+Make it feel alive but not noisy.
+
+Use WebSocket streaming.
+
+==================================================
+22. ANALYTICS
+==================================================
+
+Analytics should feel like serious business intelligence.
+
+Sections:
+
+Revenue
+Price
+Demand
+Orders
+Margin
+Inventory
+Conversion
+Traffic
+Price Changes
+API Requests
+Latency
+
+Allow:
+
+1h
+6h
+24h
+7d
+30d
+
+Use clean charts.
+
+Avoid chart overload.
+
+Every chart should answer a question.
+
+==================================================
+23. DECISIONS
+==================================================
+
+Create a powerful Decision Explorer.
+
+Each row:
+
+Timestamp
+Item
+Old Price
+New Price
+Change
+Strategy
+Status
+Decision ID
+
+Click a decision:
+
+Open Decision Replay.
+
+Show:
+
+Input Snapshot
+Context Signals
+Rules Evaluated
+Rules Applied
+Rules Suppressed
+Guardrails
+Strategy Version
+Final Price
+
+Then:
+
+"Verify Decision"
+
+Show:
+
+Original:
+₹5,400
+
+Recomputed:
+₹5,400
+
+Difference:
+₹0
+
+Deterministic:
+YES
+
+This should feel extremely trustworthy.
+
+==================================================
+24. STRATEGIES
+==================================================
+
+Create a strategy workspace.
+
+Strategy cards:
+
+Name
+Version
+Status
+
+DRAFT
+VALIDATED
+SHADOW
+ACTIVE
+PAUSED
+
+Lifecycle should be visually obvious.
+
+Actions:
+
+Validate
+Simulate
+Backtest
+Shadow
+Activate
+Pause
+Rollback
+
+Never make dangerous actions look like normal buttons.
+
+Rollback should have confirmation.
+
+==================================================
+25. RULE BUILDER
+==================================================
+
+Make rule creation visual and intuitive.
+
+Instead of forcing the analyst to write JSON:
+
+WHEN
+
+Occupancy
+is greater than
+80
+
+AND
+
+Availability
+is less than
+20
+
+THEN
+
+Increase price by
+8%
+
+Priority:
+High
+
+Conflict group:
+Demand
+
+Stackable:
+Yes
+
+Show a live natural-language explanation:
+
+"When Occupancy is above 80 and Availability is below 20, increase the price by 8%."
+
+Include conflict warnings.
+
+==================================================
+26. AI ASSISTANT
+==================================================
+
+AI exists as an assistant, NOT as the pricing engine.
+
+Give it a subtle presence.
+
+Possible interface:
+
+"Describe the pricing strategy you want."
+
+Example:
+
+"Increase room prices when occupancy is above 80% and availability is below 20%."
+
+AI generates a DRAFT rule.
+
+Clearly label:
+
+AI DRAFT
+
+Then:
+
+Review
+Edit
+Validate
+Simulate
+Activate
+
+Never imply AI directly controls live prices.
+
+==================================================
+27. DATA / HISTORICAL DATA
+==================================================
+
+Create a polished upload experience.
+
+Headline:
+
+"Bring your historical pricing data."
+
+Support:
+
+CSV
+TSV
+JSON
+JSONL
+XLSX
+XLS
+
+Show:
+
+Upload
+↓
+Validate
+↓
+Process
+↓
+Ready
+
+Show accepted rows / rejected rows / warnings.
+
+Rejected rows should be downloadable.
+
+Make the upload screen calm and simple.
+
+Do not make it look like a file management system.
+
+==================================================
+28. PROJECT CREATION
+==================================================
+
+This must be one of the best UX flows.
+
+Step indicator:
+
+01 Domain
+02 Schema
+03 Items
+04 Data
+05 Rules
+06 Strategy
+07 Test
+08 Launch
+
+Allow templates:
+
+E-commerce
+Hospitality
+Transportation
+Travel
+EV Charging
+Car Rental
+
+Also:
+
+"Start from scratch"
+
+Important:
+
+Templates are starting points, not restrictions.
+
+Allow custom domain creation.
+
+For custom domain:
+
+Domain name
+Entity label
+
+Then:
+
+Attributes
+Context signals
+
+Example:
+
+Co-working Space
+
+Entity:
+Desk
+
+Signals:
+desk_occupancy
+walk_in_rate
+noise_level
+
+The interface should make the "new domain without code" concept obvious.
+
+==================================================
+29. API INTEGRATION PAGE
+==================================================
+
+After activation, show:
+
+"Your pricing API is ready."
+
+Display:
+
+Project API key
+
+Price API
+Event API
+Bulk Price API
+
+Copy buttons.
+
+Show code snippets for:
+
+JavaScript
+Python
+Java
+cURL
+
+Keep the integration page extremely clean.
+
+Also show:
+
+Latency
+Requests
+Errors
+Last request
+API status
+
+Never expose sensitive secrets unnecessarily.
+
+==================================================
+30. ALERTS
+==================================================
+
+Alerts page:
+
+Severity
+Time
+Project
+Item
+Reason
+Status
+
+Categories:
+
+Info
+Warning
+Critical
+
+Critical alert should provide:
+
+What happened
+Why it matters
+Current strategy
+Affected item
+Recommended actions
+
+Actions:
+
+Pause
+Rollback
+Safe Mode
+Keep Monitoring
+
+==================================================
+31. AUDIT
+==================================================
+
+Audit should feel serious and trustworthy.
+
+Timeline:
+
+Strategy created
+Rule changed
+Strategy validated
+Backtest completed
+Strategy activated
+Price changed
+Alert generated
+Rollback performed
+
+Show:
+who
+what
+when
+entity
+version
+
+Keep it visually clean.
+
+==================================================
+32. PROJECT SWITCHING
+==================================================
+
+A company can have multiple pricing projects.
+
+Example:
+
+ABC Corp
+
+Projects:
+
+ABC Hotels
+E-commerce Store
+RideGo
+ChargeGrid
+
+Switching projects must be instant and obvious.
+
+Every project has its own:
+
+Schema
+Items
+Rules
+Strategies
+Analytics
+Alerts
+Decisions
+API key
+
+Never visually mix project data.
+
+==================================================
+33. EMPTY STATES
+==================================================
+
+Every empty state must teach the user what to do next.
+
+Example:
+
+No strategy yet.
+
+"Create your first pricing strategy."
+
+Button:
+Create Strategy
+
+No historical data:
+
+"Upload historical data to start backtesting."
+
+No live events:
+
+"Connect your event API to see live pricing activity."
+
+Avoid:
+
+"No data found."
+
+==================================================
+34. LOADING STATES
+==================================================
+
+Never show blank screens.
+
+Use:
+
+Skeletons
+Subtle shimmer
+Progress indicators
+
+For asynchronous operations:
+
+Backtest:
+"Running historical simulation..."
+
+Data upload:
+"Processing 42,381 rows..."
+
+Strategy validation:
+"Checking rules and conflicts..."
+
+==================================================
+35. ANIMATIONS
+==================================================
+
+Use animation intentionally.
+
+Good:
+
+- page transitions
+- sidebar collapse
+- card hover
+- number transitions
+- live event insertion
+- strategy lifecycle progression
+- subtle graph updates
+- scroll reveal
+- modal transitions
+- theme transition
+
+Bad:
+
+- constant floating particles
+- excessive parallax
+- spinning objects
+- huge animated gradients
+- distracting background animations
+
+Motion should communicate system state.
+
+==================================================
+36. GLASSMORPHISM
+==================================================
+
+Use glassmorphism selectively.
+
+Good:
+
+- hero overlays
+- live status panels
+- floating navigation elements
+- important modal surfaces
+- API preview
+
+Do NOT make every card glass.
+
+The dashboard should mostly use solid premium surfaces with subtle borders.
+
+==================================================
+37. RESPONSIVENESS
+==================================================
+
+Desktop is the primary experience.
+
+Also support:
+
+Tablet
+Mobile browser
+
+Desktop:
+full sidebar + dense workspace
+
+Tablet:
+collapsible sidebar
+
+Mobile:
+compact navigation and stacked cards
+
+Do not simply shrink the desktop UI.
+
+==================================================
+38. ACCESSIBILITY
+==================================================
+
+Use:
+
+- proper contrast
+- keyboard navigation
+- visible focus states
+- aria labels
+- accessible dialogs
+- semantic HTML
+- reduced motion support
+
+Dark mode must remain readable.
+
+==================================================
+39. TECHNICAL FRONTEND REQUIREMENTS
+==================================================
+
+Use:
+
+React
+TypeScript
+Modern component architecture
+
+Prefer:
+
+- reusable components
+- design tokens
+- centralized API client
+- route-level layouts
+- proper loading/error states
+- typed API responses
+- WebSocket abstraction
+- clean state management
+- responsive CSS
+- reusable chart components
+
+Do NOT hardcode fake dashboard data throughout the application.
+
+The frontend should be structured so the existing DevNexus backend APIs can be connected cleanly.
+
+==================================================
+40. BACKEND INTEGRATION
+==================================================
+
+The actual backend exists.
+
+Base API:
+
+https://ht1rtpk2jj.execute-api.ap-south-1.amazonaws.com
+
+API documentation:
+
+/docs
+
+WebSocket:
+
+wss://ep4rx5ngha.execute-api.ap-south-1.amazonaws.com/dev
+
+Use the actual backend endpoints from the DevNexus system reference.
+
+Important endpoints include:
+
+/auth/signup
+/auth/login
+/auth/complete-profile
+/auth/me
+
+/projects/create
+/projects/list
+/projects/get
+
+/domain/save
+/guardrails/save
+
+/items/create
+/items/list
+/items/get
+
+/data/upload-url
+/data/jobs
+/data/job
+
+/rules/create
+/rules/update
+/rules/list
+/rules/conflicts
+
+/strategies/create
+/strategies/update
+/strategies/list
+/strategies/get
+/strategies/validate
+/strategies/promote
+/strategies/rollback
+
+/simulate/whatif
+/simulate/compare
+
+/backtest/run
+/backtest/result
+/backtest/list
+
+/shadow/comparison
+
+/decisions/list
+/decisions/replay
+/decisions/verify
+
+/analytics/overview
+/analytics/timeseries
+/analytics/rules
+/analytics/system
+/analytics/domains
+
+/live/pulse
+/live/events
+/live/decisions
+/live/connections
+
+/analytics/pipeline
+
+/alerts/list
+/alerts/get
+/alerts/ack
+
+/audit/list
+
+/approvals/pending
+/approvals/get
+/approvals/answer
+/approvals/history
+
+/ai/configure
+/ai/forecast
+/ai/health
+
+/v1/p/{project_key}/price
+/v1/p/{project_key}/price/bulk
+/v1/t/{project_key}/event
+/v1/t/{project_key}/event/batch
+
+==================================================
+41. WEBSOCKET
+==================================================
+
+Use the live WebSocket for dashboard streaming.
+
+Channels:
+
+events
+decisions
+kpis
+alerts
+health
+
+Connection should be represented visibly:
+
+LIVE ●
+
+CONNECTED
+RECONNECTING
+OFFLINE
+
+On reconnect:
+
+- call /live/pulse
+- restore current state
+- reconnect WebSocket
+- continue streaming
+
+Do not show technical connection errors unless useful.
+
+Translate technical state into human language.
+
+==================================================
+42. PRODUCT LANGUAGE
+==================================================
+
+Use concise language.
+
+Prefer:
+
+"Activate strategy"
+
+instead of:
+
+"Execute deployment operation"
+
+Prefer:
+
+"Test this strategy"
+
+instead of:
+
+"Initiate simulation workflow"
+
+Prefer:
+
+"Why did the price change?"
+
+instead of:
+
+"Decision explanation"
+
+Prefer:
+
+"Rollback to v2"
+
+instead of:
+
+"Perform version rollback"
+
+The user is a business analyst, not necessarily a backend engineer.
+
+Technical details should be available when useful, but never forced.
+
+==================================================
+43. IMPORTANT UX PRINCIPLE
+==================================================
+
+The user must ALWAYS know:
+
+Where am I?
+What am I configuring?
+What happens next?
+Is this live?
+Is this safe?
+What changed?
+Why did it change?
+
+Never leave the user wondering what a button does.
+
+==================================================
+44. THE COMPLETE APPLICATION JOURNEY
+==================================================
+
+Implement the application around this exact lifecycle:
+
+SIGN UP
+↓
+COMPANY PROFILE
+↓
+DASHBOARD
+↓
+CREATE PROJECT
+↓
+DOMAIN
+↓
+SCHEMA
+↓
+ITEMS
+↓
+HISTORICAL DATA
+↓
+GUARDRAILS
+↓
+RULES
+↓
+STRATEGY
+↓
+VALIDATE
+↓
+WHAT-IF
+↓
+BACKTEST
+↓
+SHADOW
+↓
+ACTIVATE
+↓
+API INTEGRATION
+↓
+LIVE EVENTS
+↓
+DYNAMIC PRICES
+↓
+LIVE MONITORING
+↓
+ANALYTICS
+↓
+DECISION EXPLANATION
+↓
+ALERT
+↓
+APPROVAL / ACTION
+↓
+ROLLBACK / PAUSE / CONTINUE
+
+The interface should make this lifecycle feel natural rather than bureaucratic.
+
+==================================================
+45. THE MOST IMPORTANT VISUAL IDEA
+==================================================
+
+DevNexus is not:
+
+"Upload CSV → AI → price"
+
+It is:
+
+CONFIGURE
+    ↓
+TEST
+    ↓
+DEPLOY
+    ↓
+OPERATE
+
+The website should communicate this everywhere.
+
+The strongest product statement is:
+
+"From pricing strategy to live decision — one platform."
+
+==================================================
+46. FINAL QUALITY BAR
+==================================================
+
+The finished website should feel like a real product launch.
+
+A judge should be able to look at it and immediately think:
+
+"This is an actual dynamic pricing platform."
+
+Not:
+
+"This is a hackathon dashboard."
+
+Not:
+
+"This is another AI website."
+
+Not:
+
+"This is just a frontend over an API."
+
+The design should communicate:
+
+precision
+trust
+control
+speed
+clarity
+engineering quality
+
+Every screen should feel intentional.
+
+Do not add features that are not supported by the actual backend.
+
+Do not invent capabilities.
+
+Do not claim the system does something it does not.
+
+Use the backend capabilities as the source of truth.
+
+Prioritize UX quality over the number of UI elements.
+
+Make it beautiful through:
+spacing,
+typography,
+hierarchy,
+motion,
+interaction,
+data visualization,
+and restraint —
+
+not through visual clutter.
+```
+
+### One important thing
+
+I would **not** ask the website generator to build all of this as one giant dashboard immediately.
+
+The best implementation order is:
+
+**1. Landing page → 2. Auth/onboarding → 3. App shell → 4. Project creation wizard → 5. Dashboard → 6. Live/analytics → 7. Rules/strategies → 8. Simulation/backtest → 9. Decisions/audit → 10. API integration.**
+
+That matches the actual product lifecycle in your document, which explicitly defines the journey from **signup → company → project → schema → items → data → rules → strategy → validation → simulation → backtest → shadow → activation → pricing → monitoring → alerts → decisions → rollback**. Pasted text(20261007-194042)
+
+And the frontend should take advantage of the fact that the backend already has **live WebSocket channels for events, decisions, KPIs, alerts and health**, plus `/live/pulse` for initial dashboard state. Pasted text(20261007-194042)
+
+This is the direction I'd use if the goal is to make the website look **top-tier without looking overloaded**.

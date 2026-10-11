@@ -1,0 +1,329 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Step visuals
+   ------------------------------------------------------------------------
+   One diagram per wizard step, each showing the MECHANISM of that step
+   rather than decorating it: signals converging on an engine, a price being
+   clamped by a ceiling, tests resolving one by one.
+
+   Everything is inline SVG on a 240x240 viewBox, driven by CSS. No canvas, no
+   animation library — these sit beside a form the user is typing into, so they
+   must cost nothing and never steal focus.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 340px;
+  margin-inline: auto;
+}
+
+/* Atmosphere behind the diagram. A single soft amber bloom, barely there —
+   enough to lift the figure off the background without becoming a "glow". */
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    color-mix(in srgb, var(--accent) 14%, transparent),
+    transparent 68%
+  );
+  filter: blur(26px);
+  pointer-events: none;
+}
+
+/* The faint technical grid the whole product uses, masked to a disc. */
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 50% 50%, #000 32%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 32%, transparent 72%);
+  pointer-events: none;
+}
+
+.svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ── shared primitives ────────────────────────────────────────────────── */
+.plate {
+  fill: var(--surface);
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+
+.plateAccent {
+  fill: var(--accent-muted);
+  stroke: var(--accent-border);
+  stroke-width: 1.2;
+}
+
+.wire {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+
+.wireLive {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.label {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+}
+
+.labelBright {
+  fill: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.coreRing {
+  fill: none;
+  stroke: var(--accent-border);
+  stroke-width: 1.2;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. PROJECT — a workspace being provisioned
+   A request descends into a store, which answers, and the project plate
+   resolves. Reads as "something is being created for you".
+   ════════════════════════════════════════════════════════════════════════ */
+.dropIn {
+  animation: drop-in 2.8s var(--e-out) infinite;
+}
+
+@keyframes drop-in {
+  0%, 8% { opacity: 0; transform: translateY(-14px) scale(0.94); }
+  26%, 74% { opacity: 1; transform: none; }
+  92%, 100% { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+
+/* The packet that travels down the wire into the store. */
+.packet {
+  fill: var(--accent);
+  animation: packet-fall 2.8s var(--e-in-out) infinite;
+}
+
+@keyframes packet-fall {
+  0%, 10% { opacity: 0; transform: translateY(0); }
+  18% { opacity: 1; }
+  44% { opacity: 1; transform: translateY(42px); }
+  52%, 100% { opacity: 0; transform: translateY(42px); }
+}
+
+/* The store acknowledging the write. */
+.ack {
+  transform-origin: center;
+  animation: ack-pulse 2.8s var(--e-out) infinite;
+}
+
+@keyframes ack-pulse {
+  0%, 44% { opacity: 0; transform: scale(0.8); }
+  56% { opacity: 1; transform: scale(1); }
+  80%, 100% { opacity: 0; transform: scale(1.25); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. SIGNALS — inputs converging on the engine
+   Four labelled streams travel inward and the core brightens as they land.
+   This is the step's entire argument: these are what move your price.
+   ════════════════════════════════════════════════════════════════════════ */
+.streamDot {
+  fill: var(--accent);
+  offset-rotate: 0deg;
+  animation: stream-travel 2.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes stream-travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  12% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+.core {
+  transform-origin: 120px 120px;
+  animation: core-breathe 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes core-breathe {
+  0%, 60% { opacity: 0.55; transform: scale(0.97); }
+  86% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 0.55; transform: scale(0.97); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. CATALOGUE — rows arriving and stacking
+   ════════════════════════════════════════════════════════════════════════ */
+.row {
+  animation: row-arrive 3s var(--e-out) infinite;
+  opacity: 0;
+}
+
+@keyframes row-arrive {
+  0% { opacity: 0; transform: translateX(-20px); }
+  14% { opacity: 1; transform: none; }
+  78% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateX(6px); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. RULES — a condition gate opening only when the threshold is crossed
+   The value climbs past a marked line; the gate opens and the output lifts.
+   ════════════════════════════════════════════════════════════════════════ */
+.gauge {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 120;
+  animation: gauge-climb 3.2s var(--e-in-out) infinite;
+}
+
+@keyframes gauge-climb {
+  0%, 6% { stroke-dashoffset: 120; }
+  38%, 62% { stroke-dashoffset: 36; }
+  94%, 100% { stroke-dashoffset: 120; }
+}
+
+.gateOpen {
+  transform-origin: 120px 158px;
+  animation: gate-trip 3.2s var(--e-out) infinite;
+}
+
+@keyframes gate-trip {
+  0%, 36% { opacity: 0.25; transform: scaleY(1); }
+  48%, 64% { opacity: 1; transform: scaleY(0.82) translateY(-6px); }
+  80%, 100% { opacity: 0.25; transform: scaleY(1); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. GUARDRAILS — a price rising into a ceiling and being held
+   The single clearest way to show a clamp: the line WANTS to keep going and
+   visibly cannot.
+   ════════════════════════════════════════════════════════════════════════ */
+.priceLine {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 220;
+  animation: price-rise 3.4s var(--e-in-out) infinite;
+}
+
+@keyframes price-rise {
+  0%, 4% { stroke-dashoffset: 220; }
+  58%, 100% { stroke-dashoffset: 0; }
+}
+
+/* The ceiling flashes at the moment it bites. */
+.ceiling {
+  stroke: var(--critical);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 4;
+  animation: ceiling-bite 3.4s var(--e-out) infinite;
+}
+
+@keyframes ceiling-bite {
+  0%, 46% { opacity: 0.4; }
+  56% { opacity: 1; }
+  74%, 100% { opacity: 0.4; }
+}
+
+.blocked {
+  fill: var(--critical);
+  animation: blocked-pop 3.4s var(--e-out) infinite;
+}
+
+@keyframes blocked-pop {
+  0%, 50% { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1); }
+  84%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   6. TESTS — checks resolving in sequence
+   ════════════════════════════════════════════════════════════════════════ */
+.check {
+  stroke: var(--success);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  animation: check-draw 3.2s var(--e-out) infinite;
+}
+
+@keyframes check-draw {
+  0%, 10% { stroke-dashoffset: 22; }
+  28%, 86% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 22; }
+}
+
+.testRow {
+  animation: test-light 3.2s var(--e-out) infinite;
+}
+
+@keyframes test-light {
+  0%, 8% { opacity: 0.25; }
+  26%, 88% { opacity: 1; }
+  100% { opacity: 0.25; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   7. LIVE — the API answering callers
+   ════════════════════════════════════════════════════════════════════════ */
+.pulseOut {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  transform-origin: 120px 120px;
+  animation: pulse-out 2.6s var(--e-out) infinite;
+}
+
+@keyframes pulse-out {
+  0% { opacity: 0.7; transform: scale(0.42); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+.client {
+  animation: client-ping 2.6s var(--e-out) infinite;
+}
+
+@keyframes client-ping {
+  0%, 40% { opacity: 0.4; }
+  58% { opacity: 1; }
+  88%, 100% { opacity: 0.4; }
+}
+
+/* ── reduced motion: show the resolved state, never a frozen blank ────── */
+@media (prefers-reduced-motion: reduce) {
+  .dropIn, .packet, .ack, .streamDot, .core, .row, .gauge, .gateOpen,
+  .priceLine, .ceiling, .blocked, .check, .testRow, .pulseOut, .client {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
+  }
+  .packet, .ack, .blocked { opacity: 0; }
+}

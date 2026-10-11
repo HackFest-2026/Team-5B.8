@@ -1,0 +1,151 @@
+.card {
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+}
+
+.sub {
+  margin-top: 2px;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-shrink: 0;
+}
+
+.count {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+.track {
+  width: 90px;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--r-full);
+  transition: width var(--d-slow) var(--e-out);
+}
+
+/* ── steps ────────────────────────────────────────────────────────────── */
+.steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-3) var(--s-5);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.step:last-child {
+  border-bottom: none;
+}
+
+.step:hover {
+  background: var(--surface-hover);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.markDone {
+  background: var(--success-muted);
+  border-color: var(--success);
+  color: var(--success-text);
+}
+
+/* The one step the user should do next gets the accent. Only ever one, so the
+   card always answers "what now?" with a single obvious target. */
+.markNext {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+  font-weight: var(--w-semi);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-sm);
+}
+
+.labelDone {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
+}
+
+.why {
+  display: block;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.go {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.dismiss {
+  padding: var(--s-2) var(--s-5);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  text-align: center;
+  width: 100%;
+}
+
+.dismiss:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}

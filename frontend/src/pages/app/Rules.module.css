@@ -1,0 +1,354 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Rule builder
+   ----------------------------------------------------------------------
+   Reads as a sentence rather than a form: WHEN <field> <operator> <value>
+   THEN <adjust> by <amount>. An analyst should never have to see JSON.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.builder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.clauseBlock {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.blockLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.blockBody {
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* One clause, laid out as field / operator / value / remove. Collapses to a
+   stack on narrow screens rather than squeezing four controls into 300px. */
+.clauseRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.9fr) 30px;
+  gap: var(--s-2);
+  align-items: start;
+}
+
+.clauseRowBetween {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.6fr) minmax(0, 0.6fr) 30px;
+}
+
+@media (max-width: 760px) {
+  .clauseRow,
+  .clauseRowBetween {
+    grid-template-columns: 1fr;
+  }
+}
+
+.removeBtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  transition:
+    color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.removeBtn:hover:not(:disabled) {
+  color: var(--critical-text);
+  background: var(--critical-muted);
+}
+
+.removeBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.joiner {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.joinerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── the live sentence ────────────────────────────────────────────────── */
+
+/* The whole rule, in plain English, updating as the controls change. This is
+   the thing that makes a rule reviewable by someone who did not write it. */
+.sentence {
+  padding: var(--s-4);
+  border-left: 2px solid var(--accent);
+  background: var(--accent-muted);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  font-size: var(--t-sm);
+  line-height: var(--lh-normal);
+}
+
+.sentenceIncomplete {
+  border-left-color: var(--border-strong);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.sentenceStrong {
+  font-weight: var(--w-semi);
+  color: var(--text);
+}
+
+/* ── rule list ────────────────────────────────────────────────────────── */
+.ruleCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-4);
+  align-items: start;
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  transition: border-color var(--d-fast) var(--e-out);
+}
+
+.ruleCard:hover {
+  border-color: var(--border-strong);
+}
+
+.ruleDisabled {
+  opacity: 0.62;
+}
+
+.ruleTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.ruleExplanation {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.ruleMeta {
+  display: flex;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  flex-wrap: wrap;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.ruleActions {
+  display: flex;
+  gap: var(--s-1);
+  flex-shrink: 0;
+}
+
+/* ── AI draft ─────────────────────────────────────────────────────────── */
+
+/* An AI draft is visibly a draft. The spec is explicit that AI must never look
+   like it is controlling live prices, so the label is unmissable and the only
+   way out of this panel is a human pressing a button. */
+.aiPanel {
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.aiHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--accent-muted);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.aiLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: 2px var(--s-2);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: 10px;
+  font-weight: var(--w-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.aiBody {
+  padding: var(--s-4);
+}
+
+.aiInterpretation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.aiMeta {
+  display: flex;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.aiWarning {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--warning-muted);
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+  font-size: var(--t-sm);
+}
+
+/* ── conflicts ────────────────────────────────────────────────────────── */
+.conflict {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  font-size: var(--t-sm);
+}
+
+.conflictError {
+  border-color: color-mix(in srgb, var(--critical) 40%, transparent);
+  background: var(--critical-muted);
+}
+
+.conflictWarning {
+  border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+  background: var(--warning-muted);
+}
+
+.conflictIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.conflictRules {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+/* ── formula editor ───────────────────────────────────────────────────── */
+.formulaBox {
+  margin-top: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.formulaHint {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+.formulaHint code {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  color: var(--text-secondary);
+}
+
+/* ── active-window editor ─────────────────────────────────────────────── */
+.window {
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+}
+
+.windowHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--text-secondary);
+}
+
+.windowNote {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  font-weight: var(--w-normal);
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── per-rule live on/off switch ──────────────────────────────────────── */
+.ruleSwitch {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 22px;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  border: 1px solid var(--border-strong);
+  transition: background-color var(--d-base) var(--e-out), border-color var(--d-base) var(--e-out);
+}
+
+.ruleSwitchOn { background: var(--success); border-color: var(--success); }
+.ruleSwitch:disabled { opacity: 0.55; cursor: wait; }
+
+.ruleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-full);
+  background: var(--text-secondary);
+  transition: transform 240ms cubic-bezier(0.34, 1.4, 0.5, 1), background-color var(--d-base) var(--e-out);
+}
+
+.ruleSwitchOn .ruleKnob { transform: translateX(16px); background: var(--text-inverse); }

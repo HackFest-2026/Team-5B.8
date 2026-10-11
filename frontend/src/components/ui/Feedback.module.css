@@ -1,0 +1,200 @@
+/* ── skeletons ────────────────────────────────────────────────────────── */
+.line {
+  height: 12px;
+  border-radius: var(--r-sm);
+}
+
+.block {
+  border-radius: var(--r-md);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* ── empty state ──────────────────────────────────────────────────────── */
+
+/* Centred, generous, and always carrying an action. The spec is explicit:
+   every empty state teaches the next step, and "No data found." is banned. */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-3);
+  padding: var(--s-8) var(--s-5);
+}
+
+.emptyCompact {
+  padding: var(--s-6) var(--s-4);
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--s-1);
+  border-radius: var(--r-lg);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.emptyTitle {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+}
+
+.emptyBody {
+  max-width: 42ch;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.emptyActions {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── error ────────────────────────────────────────────────────────────── */
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid color-mix(in srgb, var(--critical) 40%, transparent);
+  background: var(--critical-muted);
+  border-radius: var(--r-md);
+}
+
+.errorIcon {
+  color: var(--critical-text);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.errorBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.errorTitle {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--text);
+}
+
+.errorMessage {
+  margin-top: 2px;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+/* The error code, for a support conversation. Small and quiet: it is reference
+   material, not the message. */
+.errorCode {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.errorActions {
+  margin-top: var(--s-3);
+  display: flex;
+  gap: var(--s-2);
+}
+
+/* ── inline progress ──────────────────────────────────────────────────── */
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.centred {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: var(--s-7) var(--s-4);
+  color: var(--text-secondary);
+  font-size: var(--t-sm);
+}
+
+/* ── determinate progress ─────────────────────────────────────────────── */
+.progressTrack {
+  height: 4px;
+  width: 100%;
+  background: var(--surface-active);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--r-full);
+  transition: width var(--d-base) var(--e-out);
+}
+
+/* ── scoped section error ─────────────────────────────────────────────── */
+
+/* Deliberately quiet: a muted strip, not a red alert. It says one piece of data
+   is missing while the rest of the page is fine, which is a very different
+   message from "the product is down". */
+.errorCompact {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--warning);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  font-size: var(--t-sm);
+}
+
+.errorCompactText {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-secondary);
+}
+
+.errorCompactCode {
+  margin-left: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.errorCompactRetry {
+  flex-shrink: 0;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--accent-text);
+}
+
+.errorCompactRetry:hover {
+  background: var(--accent-muted);
+}
+
+/* The actionable hint under a timeout. Block-level so it does not squeeze the
+   title on a narrow dashboard column. */
+.errorCompactHint {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}

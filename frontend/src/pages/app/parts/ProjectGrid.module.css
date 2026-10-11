@@ -1,0 +1,598 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Project cards — the way into a system
+   ------------------------------------------------------------------------
+   Recognition and entry, nothing else. No figures on the cards: they would
+   be a different business's numbers sitting next to each other, which reads
+   as noise and makes the card harder to scan, not easier.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--t-md);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.018em;
+}
+
+.sub {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+/* ── grid ─────────────────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: var(--s-4);
+}
+
+/* ── card ─────────────────────────────────────────────────────────────── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-height: 184px;
+  padding: var(--s-5);
+  text-align: left;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(130%);
+  overflow: hidden;
+  transition:
+    transform var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out),
+    box-shadow var(--d-base) var(--e-out);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Colour only ever enters a card through this one wash, and only when the
+   system is actually running. An idle card stays graphite. */
+.cardGlow {
+  position: absolute;
+  top: -55%;
+  right: -25%;
+  width: 78%;
+  height: 120%;
+  border-radius: 50%;
+  filter: blur(34px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--d-slow) var(--e-out);
+}
+
+.cardOn .cardGlow {
+  opacity: 1;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--accent) 22%, transparent), transparent 68%);
+}
+
+.cardDraft {
+  border-style: dashed;
+  background: var(--surface-sunken);
+  backdrop-filter: none;
+}
+
+.cardTop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.cardOn .mark {
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+
+/* ── state pill ───────────────────────────────────────────────────────── */
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 3px var(--s-3);
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stateOn {
+  border-color: color-mix(in srgb, var(--success) 42%, transparent);
+  background: var(--success-muted);
+  color: var(--success-text);
+}
+
+.stateDraft { border-style: dashed; }
+
+/* A live system gets a heartbeat; an idle one gets nothing, so "on" is legible
+   from across the room without reading a word. */
+.stateDot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--success);
+}
+
+.stateDot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-full);
+  border: 1px solid var(--success);
+  animation: ping 2.4s var(--e-out) infinite;
+}
+
+@keyframes ping {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stateDot::after { animation: none; opacity: 0.3; transform: scale(2); }
+}
+
+.cardBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--t-md);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.018em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+.bar {
+  position: relative;
+  display: block;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--surface-active);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.cardFoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.go {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  color: var(--accent-text);
+  font-weight: var(--w-medium);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity var(--d-fast) var(--e-out),
+    transform var(--d-fast) var(--e-out);
+}
+
+.card:hover .go { opacity: 1; transform: none; }
+
+/* ── add card ─────────────────────────────────────────────────────────── */
+.addCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 184px;
+  padding: var(--s-5);
+  border-radius: var(--r-xl);
+  border: 1px dashed var(--border-strong);
+  background: transparent;
+  color: var(--text-muted);
+  transition:
+    border-color var(--d-base) var(--e-out),
+    color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out);
+}
+
+.addCard:hover {
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+  background: var(--accent-muted);
+}
+
+.addIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-full);
+  border: 1px solid currentColor;
+  opacity: 0.7;
+}
+
+.addText {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.addSub { font-size: var(--t-xs); opacity: 0.75; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   Empty account
+   ------------------------------------------------------------------------
+   Not a "nothing here" box. The picture IS the product: a request arriving,
+   a decision being made, a price going back.
+   ════════════════════════════════════════════════════════════════════════ */
+.empty {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: var(--s-8);
+  min-height: 72vh;
+  padding: var(--s-6) 0;
+}
+
+.emptyArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: var(--s-6) var(--s-5);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(140%);
+  overflow: hidden;
+}
+
+.emptyArt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 15%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 15%, transparent 75%);
+}
+
+.svg {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  overflow: visible;
+}
+
+/* ── diagram parts ────────────────────────────────────────────────────── */
+.node {
+  fill: var(--surface-raised);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  opacity: 0;
+  animation: rise 0.6s var(--e-out) forwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The dash offset is what animates, so the line itself never moves — it reads
+   as something travelling ALONG a fixed wire rather than a wire being drawn. */
+.wire,
+.wireOut {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 7;
+  opacity: 0.85;
+  animation: flow 1.5s linear infinite;
+}
+
+.wireOut { stroke-width: 1.8; }
+
+@keyframes flow {
+  to { stroke-dashoffset: -22; }
+}
+
+.core { stroke: none; }
+
+.coreEdge {
+  fill: none;
+  stroke: var(--accent-border);
+  stroke-width: 1;
+}
+
+.coreRing {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  opacity: 0.85;
+  transform-origin: 144px 100px;
+  animation: spin 6s linear infinite;
+  stroke-dasharray: 14 8;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.coreDot { fill: var(--accent); }
+
+.price {
+  fill: var(--surface-raised);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+}
+
+.nodeText {
+  fill: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Captions name the two parts that are not self-evident: the thing in the
+   middle, and the thing that comes out. */
+.caption {
+  fill: var(--text-muted);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.priceText {
+  fill: var(--accent-text);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wire, .wireOut, .coreRing { animation: none; }
+  .node { animation: none; opacity: 1; }
+}
+
+/* The group exists so the ring and its hub rotate together; without it the
+   hub would orbit rather than spin in place. */
+.gear { transform-origin: 144px 100px; }
+
+.emptyCopy { position: relative; min-width: 0; }
+
+/* ── empty copy ───────────────────────────────────────────────────────── */
+.emptyTitle {
+  font-size: var(--t-xl);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.emptyBody {
+  margin-top: var(--s-4);
+  max-width: 52ch;
+  font-size: var(--t-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.stepIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-text);
+}
+
+.stepTitle {
+  display: block;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.stepBody {
+  display: block;
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+.emptyCta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-7);
+  height: 48px;
+  padding: 0 var(--s-6);
+  border-radius: var(--r-full);
+  background: var(--accent);
+  color: var(--text-inverse);
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+  box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    transform var(--d-fast) var(--e-out),
+    box-shadow var(--d-fast) var(--e-out);
+}
+
+.emptyCta:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.emptyCta:active { transform: none; }
+
+@media (max-width: 900px) {
+  .empty {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-6);
+    min-height: 0;
+  }
+  .emptyArt { order: -1; padding: var(--s-5); }
+}
+
+/* ── card kebab menu ──────────────────────────────────────────────────── */
+/* The wrapper is the grid item now; the card fills it and the kebab floats in
+   its corner, outside the card button so it never opens the project. */
+.cardWrap {
+  position: relative;
+  display: flex;
+}
+
+.cardWrap > .card {
+  width: 100%;
+}
+
+.menu {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+  z-index: 3;
+}
+
+.kebab {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-full);
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--e-out), background var(--d-fast), color var(--d-fast);
+}
+
+.cardWrap:hover .kebab,
+.kebab:focus-visible,
+.kebab[aria-expanded='true'] {
+  opacity: 1;
+}
+
+.kebab:hover {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.kebabDots {
+  font-size: 17px;
+  line-height: 1;
+  font-weight: var(--w-bold);
+}
+
+.menuPop {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  min-width: 168px;
+  padding: var(--s-1);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+  animation: menuPop 120ms var(--e-out);
+}
+
+@keyframes menuPop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.menuItemDanger {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  padding: var(--s-2) var(--s-3);
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--critical-text, #e5484d);
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItemDanger:hover {
+  background: color-mix(in srgb, var(--critical-text, #e5484d) 12%, transparent);
+}

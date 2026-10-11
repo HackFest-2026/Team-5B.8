@@ -1,0 +1,48 @@
+# ── SECRETS — never commit ─────────────────────────────────
+.secrets/
+*.key
+*.pem
+.env
+.env.*
+!.env.example
+
+# ── Node ───────────────────────────────────────────────────
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+npm-debug.log*
+.pnpm-store/
+
+# ── AWS / IaC ──────────────────────────────────────────────
+.aws-sam/
+cdk.out/
+.serverless/
+samconfig.toml
+
+# ── Android ────────────────────────────────────────────────
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.keystore
+google-services.json
+
+# ── OS / editor ────────────────────────────────────────────
+.DS_Store
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.build/
+
+# Firebase. The admin SDK file is a LIVE PRIVATE KEY — it arrived in the repo
+# root where only google-services.json was ignored, so these patterns cover
+# every name Firebase hands out, wherever it lands.
+*firebase-adminsdk*.json
+firebase-service-account.json
+google-services.json
+GoogleService-Info.plist
+*-adminsdk-*.json

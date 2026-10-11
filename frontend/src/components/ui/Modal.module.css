@@ -1,0 +1,140 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-5);
+  background: rgba(0, 0, 0, 0.6);
+  /* One of the few sanctioned uses of blur: it separates a modal decision from
+     the dashboard behind it. */
+  backdrop-filter: blur(3px);
+  animation: fade-in var(--d-fast) var(--e-out);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - var(--s-8));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  animation: rise-in var(--d-base) var(--e-out);
+}
+
+.wide {
+  max-width: 720px;
+}
+
+.xwide {
+  max-width: 1000px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--s-5) var(--s-4);
+}
+
+.title {
+  font-size: var(--t-md);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin-top: var(--s-1);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.close {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px 0 0;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.close:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.body {
+  padding: 0 var(--s-5);
+  overflow-y: auto;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  padding: var(--s-5);
+}
+
+/* ── destructive confirmation ─────────────────────────────────────────── */
+
+/* A spelled-out consequence, not a generic "are you sure". Rollback changes
+   what live customers are charged, and the dialog has to say so. */
+.consequence {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  margin-top: var(--s-4);
+  background: var(--critical-muted);
+  border: 1px solid color-mix(in srgb, var(--critical) 35%, transparent);
+  border-radius: var(--r-md);
+  font-size: var(--t-sm);
+  color: var(--text);
+}
+
+.consequenceIcon {
+  flex-shrink: 0;
+  color: var(--critical-text);
+  margin-top: 2px;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  margin-top: var(--s-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+  font-size: var(--t-sm);
+}
+
+.summaryLabel {
+  color: var(--text-muted);
+}
+
+.summaryValue {
+  color: var(--text);
+  font-weight: var(--w-medium);
+  text-align: right;
+}

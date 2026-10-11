@@ -1,0 +1,327 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Full-screen wizard shell
+   ------------------------------------------------------------------------
+   A takeover: no sidebar, no topbar, nothing of the app chrome. Creating a
+   pricing system is a single sustained task and the surrounding navigation is
+   only an invitation to abandon it halfway.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* Depth without noise: two very wide, very faint amber washes placed off the
+   centre line, so the screen has a light source instead of being flat black. */
+.root::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 38% at 78% 18%,
+      color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    radial-gradient(46% 42% at 12% 88%,
+      color-mix(in srgb, var(--accent) 6%, transparent), transparent 72%);
+}
+
+/* ── top bar ──────────────────────────────────────────────────────────── */
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  row-gap: var(--s-3);
+  flex-wrap: wrap;
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  flex-shrink: 0;
+}
+
+/* The step controls sit at the end of the top bar; keep them together and let
+   the hint shrink before the buttons do. */
+.barRight {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.barLeft,
+.barRight {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.draftState {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.savedDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--success);
+}
+
+/* ── progress rail ────────────────────────────────────────────────────── */
+/* Sized to its content rather than stretched: seven equal flex children in
+   560px left each label about four characters, so "Project" rendered as "P". */
+.rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.railStep {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: none;
+  min-width: 0;
+}
+
+.railDot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  transition:
+    background-color var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out),
+    color var(--d-base) var(--e-out);
+}
+
+.railDone .railDot {
+  background: var(--success-muted);
+  border-color: var(--success);
+  color: var(--success-text);
+}
+
+.railCurrent .railDot {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+  font-weight: var(--w-semi);
+  /* A soft ring, so the current step reads at a glance on a wide bar. */
+  box-shadow: 0 0 0 4px var(--accent-muted);
+}
+
+/* Only the step you are on is named. The rest are dots, which is all a
+   progress rail needs to say — and it means no label is ever truncated. */
+.railLabel {
+  display: none;
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.railCurrent .railLabel { display: inline; }
+
+@media (max-width: 720px) {
+  .railCurrent .railLabel { display: none; }
+}
+
+.railCurrent .railLabel {
+  color: var(--text);
+  font-weight: var(--w-medium);
+}
+
+.railLine {
+  width: 32px;
+  flex: none;
+  height: 1px;
+  margin: 0 var(--s-2);
+  background: var(--border);
+}
+
+.railDone + .railLine,
+.railLineDone {
+  background: color-mix(in srgb, var(--success) 50%, transparent);
+}
+
+@media (max-width: 1000px) {
+  .railLabel { display: none; }
+  .rail { max-width: 300px; }
+}
+
+/* ── body: form on the left, diagram on the right ─────────────────────── */
+/* The work is in the middle of the screen, where the eye already is.
+   The diagram used to take 44% of the width and sat beside the fields, which
+   made the thing you are actually doing feel like a sidebar on its own page. */
+.body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--s-7) var(--s-8);
+  overflow: hidden;
+}
+
+.formCol {
+  width: 100%;
+  min-width: 0;
+  max-width: 680px;
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 0 var(--s-3);
+  /* Each step arrives rather than snapping, which makes the rail feel like
+     movement through a process instead of a set of disconnected screens. */
+  animation: step-enter var(--d-slow) var(--e-out);
+}
+
+@keyframes step-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Pinned to the left gutter, out of the path between the fields and the
+   Continue button. It is reference, not workspace: small enough to glance at,
+   large enough to read, and never in the way of typing. */
+.visualCol {
+  position: absolute;
+  left: var(--s-7);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  width: 248px;
+  pointer-events: none;
+}
+
+/* Below this the centred column would collide with it, and a diagram that
+   overlaps the form is worse than no diagram. */
+@media (max-width: 1240px) {
+  .visualCol { display: none; }
+}
+
+/* The one place glass genuinely earns itself: a floating panel holding the
+   diagram, lifted off the background. */
+.visualCard {
+  width: 100%;
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px) saturate(130%);
+  box-shadow: var(--shadow-md);
+}
+
+.visualCaption {
+  margin-top: 0;
+  text-align: left;
+}
+
+.visualTitle {
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.visualBody {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+@media (max-width: 1080px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+  }
+  /* The diagram leads on a narrow screen: it explains the step before the
+     form asks for anything. */
+  .visualCol {
+    position: static;
+    order: -1;
+    height: auto;
+  }
+  .visualCard { max-width: 300px; padding: var(--s-4); }
+  .formCol { max-height: none; overflow: visible; }
+}
+
+/* ── step heading ─────────────────────────────────────────────────────── */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.title {
+  margin-top: var(--s-3);
+  font-size: var(--t-xl);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.lead {
+  margin-top: var(--s-3);
+  max-width: 52ch;
+  font-size: var(--t-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.fields {
+  margin-top: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+.foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-8);
+  border-top: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  flex-shrink: 0;
+}
+
+.footHint {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+@media (max-width: 760px) {
+  .body { padding: var(--s-5) var(--s-4); }
+  .bar, .foot { padding-inline: var(--s-4); }
+}

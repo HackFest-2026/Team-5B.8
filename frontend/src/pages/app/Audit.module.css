@@ -1,0 +1,140 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: var(--s-3);
+}
+
+/* The connecting line is drawn on the rail rather than on the dots, so it runs
+   unbroken between entries without needing a pseudo-element per row. */
+.rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.rail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.entry:first-child .rail::before {
+  top: 13px;
+}
+
+.entry:last-child .rail::before {
+  bottom: calc(100% - 13px);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.accent {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+.warning {
+  border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+  background: var(--warning-muted);
+  color: var(--warning-text);
+}
+
+.critical {
+  border-color: color-mix(in srgb, var(--critical) 45%, transparent);
+  background: var(--critical-muted);
+  color: var(--critical-text);
+}
+
+.neutral {
+  color: var(--text-muted);
+}
+
+.body {
+  min-width: 0;
+  padding-bottom: var(--s-5);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.action {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.time {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.detail {
+  display: flex;
+  gap: var(--s-3);
+  margin-top: 2px;
+  flex-wrap: wrap;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.entity {
+  font-family: var(--font-mono);
+}
+
+.actor {
+  font-family: var(--font-mono);
+}
+
+.changes {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  flex-wrap: wrap;
+}
+
+/* One chip per changed field. Monospace because these are values, and tabular
+   so a before → after pair lines up. */
+.change {
+  padding: 1px var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.note {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}

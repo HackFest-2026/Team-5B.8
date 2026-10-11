@@ -1,0 +1,294 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Playground — safe, real-engine testing
+   ════════════════════════════════════════════════════════════════════════ */
+
+.safe {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  max-width: 80ch;
+}
+
+.suites {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+/* ── a test / suite ───────────────────────────────────────────────────── */
+.suite {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--d-base) var(--e-out);
+}
+
+.suiteDone { border-color: var(--border-strong); }
+
+.suiteHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+
+.suiteTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: left;
+  min-width: 0;
+}
+
+.chev {
+  flex: none;
+  color: var(--text-muted);
+  transition: transform var(--d-fast) var(--e-out);
+}
+
+.chevCollapsed { transform: rotate(-90deg); }
+
+.suiteName {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.suiteSub {
+  display: block;
+  margin-top: 1px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.suiteActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: none;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.score {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: 2px var(--s-2);
+  border-radius: var(--r-full);
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+}
+
+.scoreOk { background: var(--success-muted); color: var(--success-text); }
+.scoreBad { background: var(--warning-muted); color: var(--warning-text); }
+
+.runningTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--accent-text);
+}
+
+.remove {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  transition: background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out);
+}
+
+.remove:hover { background: var(--surface-active); color: var(--critical-text); }
+
+/* ── cases ────────────────────────────────────────────────────────────── */
+.caseList {
+  display: flex;
+  flex-direction: column;
+}
+
+.case {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  transition: background-color var(--d-base) var(--e-out);
+}
+
+.case:last-child { border-bottom: none; }
+
+.case_running { background: var(--surface-raised); }
+.case_match { background: color-mix(in srgb, var(--success) 5%, transparent); }
+.case_mismatch { background: color-mix(in srgb, var(--warning) 7%, transparent); }
+.case_error { background: var(--critical-muted); }
+
+.caseMark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+}
+
+.case_match .caseMark { background: var(--success); border-color: transparent; color: var(--text-inverse); }
+.case_mismatch .caseMark { background: var(--warning); border-color: transparent; color: var(--text-inverse); }
+.case_error .caseMark { color: var(--critical-text); border-color: var(--critical); }
+.case_running .caseMark { border-color: var(--accent); color: var(--accent-text); }
+
+.caseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--border-strong);
+}
+
+.caseBody { min-width: 0; }
+
+.caseTitle {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+}
+
+.caseDesc {
+  margin-top: 1px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+.caseInputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+
+.caseItem {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--accent-text);
+}
+
+.chip {
+  padding: 1px var(--s-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-secondary);
+}
+
+.chipMuted {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.caseErr {
+  margin-top: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--critical-text);
+}
+
+/* ── per-case result ──────────────────────────────────────────────────── */
+.caseResult {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.resLine {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.resLabel {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.resVal {
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.resActual { font-weight: var(--w-semi); color: var(--text); }
+
+/* The AI's predicted number, shown faint as a reference — not a pass/fail. */
+.resValMuted { color: var(--text-muted); opacity: 0.8; }
+
+/* Which rules the engine actually fired for this case. */
+.resDrivers {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.mismatchTag {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--warning-text);
+}
+
+.suiteFoot {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--s-3) var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ── manual form ──────────────────────────────────────────────────────── */
+.manual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-lg);
+  background: var(--accent-muted);
+}
+
+.manualHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--accent-text);
+}
+
+.manualFields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--s-3);
+}
+
+@media (max-width: 640px) {
+  .case { grid-template-columns: 24px 1fr; }
+  .caseResult { grid-column: 2; align-items: flex-start; text-align: left; margin-top: var(--s-2); }
+}

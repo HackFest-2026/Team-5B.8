@@ -1,0 +1,144 @@
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-5);
+  margin-bottom: var(--s-5);
+  flex-wrap: wrap;
+}
+
+.titleBlock {
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.crumbLink:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-lg);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.02em;
+}
+
+.description {
+  margin-top: var(--s-2);
+  max-width: 72ch;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+/* ── layout helpers used across pages ─────────────────────────────────── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.stackTight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-5);
+}
+
+.sidebarRight {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--s-5);
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .twoCol,
+  .sidebarRight {
+    grid-template-columns: 1fr;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+/* ── key/value list, used on every detail panel ───────────────────────── */
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.kvRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  font-size: var(--t-sm);
+}
+
+.kvKey {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.kvValue {
+  text-align: right;
+  font-weight: var(--w-medium);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ── a well for secondary detail ─────────────────────────────────────── */
+.well {
+  padding: var(--s-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.note {
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: var(--t-sm);
+}

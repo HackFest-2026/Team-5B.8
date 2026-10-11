@@ -1,0 +1,178 @@
+/* The approval card. Bordered in the severity colour because it is the one
+   thing on the dashboard that is actively waiting for the user. */
+.card {
+  border: 1px solid color-mix(in srgb, var(--critical) 42%, transparent);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.cardWarning {
+  border-color: color-mix(in srgb, var(--warning) 42%, transparent);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  background: var(--critical-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--critical) 30%, transparent);
+}
+
+.cardWarning .head {
+  background: var(--warning-muted);
+  border-bottom-color: color-mix(in srgb, var(--warning) 30%, transparent);
+}
+
+.headIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--critical-text);
+}
+
+.cardWarning .headIcon {
+  color: var(--warning-text);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+}
+
+.question {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+.context {
+  margin-top: var(--s-1);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.meta {
+  display: flex;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  flex-wrap: wrap;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+.metaItem {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.metaValue {
+  color: var(--text-secondary);
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.body {
+  padding: var(--s-4) var(--s-5) var(--s-5);
+}
+
+.prompt {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  margin-bottom: var(--s-3);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-align: left;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.option:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  background: var(--surface-hover);
+}
+
+.option:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* An option that changes live pricing looks different from one that does not.
+   The spec: never make a dangerous action look like a normal button. */
+.optionDanger {
+  border-color: color-mix(in srgb, var(--critical) 45%, transparent);
+}
+
+.optionDanger:hover:not(:disabled) {
+  background: var(--critical-muted);
+  border-color: var(--critical);
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+}
+
+.optionLabel {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+}
+
+.optionDanger .optionLabel {
+  color: var(--critical-text);
+}
+
+/* The consequence, always visible rather than behind a hover. The user is
+   choosing between outcomes, so the outcomes have to be on screen. */
+.optionConsequence {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+.recommended {
+  flex-shrink: 0;
+  padding: 2px var(--s-2);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-sm);
+  background: var(--accent-muted);
+  font-size: 10px;
+  font-weight: var(--w-semi);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.more {
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}

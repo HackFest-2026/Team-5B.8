@@ -1,0 +1,256 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Account dashboard — status, not analytics
+   ------------------------------------------------------------------------
+   One board. The verdict, what needs attention, the counts behind it and the
+   scale are a single thought, so they share one surface rather than floating
+   as separate strips with dead space underneath.
+
+   On a good day this screen is almost silent, and that is the design: a status
+   board should be able to say "nothing to report" without padding itself out
+   with numbers nobody asked for.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding-top: var(--s-2);
+}
+
+.board {
+  position: relative;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(140%);
+  overflow: hidden;
+}
+
+/* A single wash of colour carries the whole verdict, which is why every other
+   surface on the board stays graphite. Kept low so it reads as atmosphere
+   rather than a coloured panel. */
+.glow {
+  position: absolute;
+  top: -70%;
+  left: -6%;
+  width: 40%;
+  height: 200%;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.calm .glow { background: radial-gradient(circle, var(--success), transparent 65%); }
+.alarm .glow { background: radial-gradient(circle, var(--critical), transparent 65%); }
+
+/* ── verdict ──────────────────────────────────────────────────────────── */
+.verdict {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-8) var(--s-7);
+}
+
+.ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  flex: none;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+}
+
+.dot {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--r-full);
+}
+
+.calm .dot { background: var(--success); }
+.alarm .dot { background: var(--critical); }
+
+/* Two rings offset in time, so the pulse reads as a heartbeat rather than one
+   expanding circle. It is the only motion on the page. */
+.dot::before,
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-full);
+  border: 1px solid;
+  animation: pulse 2.8s var(--e-out) infinite;
+}
+
+.dot::after { animation-delay: 1.4s; }
+
+.calm .dot::before, .calm .dot::after { border-color: var(--success); }
+.alarm .dot::before, .alarm .dot::after { border-color: var(--critical); }
+
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(3.8); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::before, .dot::after { animation: none; opacity: 0.22; transform: scale(2.2); }
+}
+
+.verdictText { min-width: 0; }
+
+.eyebrow {
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.title {
+  margin-top: var(--s-2);
+  font-size: var(--t-xl);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.sub {
+  margin-top: var(--s-3);
+  max-width: 56ch;
+  font-size: var(--t-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+/* ── what needs you ───────────────────────────────────────────────────── */
+.alerts {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-4) var(--s-7);
+  text-align: left;
+  background: var(--critical-muted);
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.alert:hover { background: color-mix(in srgb, var(--critical) 20%, transparent); }
+
+.alertIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--critical-text);
+}
+
+.alertText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.alertName {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+.alertWhy {
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+.alertGo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  flex: none;
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  color: var(--critical-text);
+}
+
+/* ── counts ───────────────────────────────────────────────────────────── */
+/* A 1px gap over a border-coloured background gives true hairlines with no
+   doubling where cells meet. */
+.counts {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.count {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-5) var(--s-6);
+  background: var(--surface);
+}
+
+.countValue {
+  font-size: var(--t-lg);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.countOn { color: var(--success-text); }
+
+.countLabel {
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── foot ─────────────────────────────────────────────────────────────── */
+.foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  padding: var(--s-3) var(--s-5) var(--s-3) var(--s-7);
+  border-top: 1px solid var(--border);
+  background: var(--surface-sunken);
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+@media (max-width: 720px) {
+  .verdict {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-5);
+    padding: var(--s-6) var(--s-5);
+  }
+  .alert { padding-inline: var(--s-5); }
+  .foot { padding-left: var(--s-5); }
+}

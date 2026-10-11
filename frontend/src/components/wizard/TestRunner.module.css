@@ -1,0 +1,236 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Test runner
+   ------------------------------------------------------------------------
+   Vertical, one case per row, each resolving in sequence. The sequencing is
+   the point: watching checks land one by one is what makes "it works" feel
+   earned rather than asserted.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* ── the thinking line, before anything runs ──────────────────────────── */
+.preamble {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+/* Three dots that fill in turn: a small, honest "working" signal that does not
+   pretend to be a progress bar for something unmeasurable. */
+.thinkDots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.thinkDot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+  animation: think 1.1s var(--e-in-out) infinite;
+}
+
+@keyframes think {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* ── a case ───────────────────────────────────────────────────────────── */
+.case {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: case-in var(--d-base) var(--e-out) forwards;
+  transition: border-color var(--d-base) var(--e-out);
+}
+
+@keyframes case-in {
+  to { opacity: 1; transform: none; }
+}
+
+.casePending {
+  opacity: 0.55;
+}
+
+.caseRunning {
+  border-color: var(--accent-border);
+  background: var(--accent-muted);
+}
+
+.casePass {
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+
+.caseFail {
+  border-color: var(--critical);
+  background: var(--critical-muted);
+}
+
+/* ── status mark ──────────────────────────────────────────────────────── */
+.mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.markRunning {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.markPass {
+  border-color: var(--success);
+  background: var(--success-muted);
+  color: var(--success-text);
+}
+
+.markFail {
+  border-color: var(--critical);
+  background: var(--critical-muted);
+  color: var(--critical-text);
+}
+
+/* ── body ─────────────────────────────────────────────────────────────── */
+.body {
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.rationale {
+  margin-top: 2px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+/* The inputs this case used — shown so a result is checkable, not just claimed. */
+.given {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-top: var(--s-3);
+}
+
+.chip {
+  padding: 1px var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.verdict {
+  margin-top: var(--s-3);
+  font-size: var(--t-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  align-items: baseline;
+}
+
+.expected,
+.actual {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+}
+
+.expected { color: var(--text-muted); }
+.actualPass { color: var(--success-text); font-weight: var(--w-semi); }
+.actualFail { color: var(--critical-text); font-weight: var(--w-semi); }
+
+.why {
+  margin-top: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--critical-text);
+  line-height: var(--lh-snug);
+}
+
+.timing {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── summary ──────────────────────────────────────────────────────────── */
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  margin-top: var(--s-2);
+  border-radius: var(--r-lg);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  background: var(--success-muted);
+  animation: case-in var(--d-slow) var(--e-out);
+}
+
+.summaryBad {
+  border-color: var(--critical);
+  background: var(--critical-muted);
+}
+
+.summaryIcon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  border: 1px solid var(--success);
+  color: var(--success-text);
+}
+
+.summaryBad .summaryIcon {
+  border-color: var(--critical);
+  color: var(--critical-text);
+}
+
+.summaryTitle {
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+}
+
+.summaryBody {
+  margin-top: 2px;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case, .summary { animation: none; opacity: 1; transform: none; }
+  .thinkDot { animation: none; opacity: 1; }
+}

@@ -1,0 +1,232 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--s-5);
+  align-items: start;
+}
+
+@media (max-width: 1060px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── the central timeline ─────────────────────────────────────────────── */
+.feed {
+  /* A capped, scrolling region rather than an ever-growing list: an unbounded
+     live feed eventually makes the page scroll to nowhere. */
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 64px 22px minmax(0, 1fr) auto;
+  gap: var(--s-3);
+  align-items: baseline;
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowNew {
+  animation: stream-in var(--d-base) var(--e-out);
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.kind {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-sm);
+  flex-shrink: 0;
+}
+
+.kindEvent {
+  background: var(--surface-hover);
+  color: var(--text-muted);
+}
+
+.kindDecision {
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+.kindAlert {
+  background: var(--critical-muted);
+  color: var(--critical-text);
+}
+
+.kindSignal {
+  background: var(--info-muted);
+  color: var(--info-text);
+}
+
+.text {
+  font-size: var(--t-sm);
+  min-width: 0;
+}
+
+.sub {
+  margin-top: 1px;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+}
+
+.delta {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: var(--w-normal);
+}
+
+.up {
+  color: var(--success-text);
+}
+
+.down {
+  color: var(--critical-text);
+}
+
+/* ── signals panel ───────────────────────────────────────────────────── */
+.signalGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+}
+
+.signal {
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+}
+
+.signalName {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signalValue {
+  margin-top: var(--s-1);
+  font-size: var(--t-md);
+  font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* A brief highlight when a value updates, so the change is visible without the
+   user having to be looking at that exact card. */
+.signalFlash {
+  animation: flash-accent 900ms var(--e-out);
+}
+
+@keyframes flash-accent {
+  0% {
+    color: var(--accent);
+  }
+  100% {
+    color: inherit;
+  }
+}
+
+.signalMeta {
+  margin-top: var(--s-1);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stale {
+  color: var(--warning-text);
+}
+
+/* ── queue health ─────────────────────────────────────────────────────── */
+.queues {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.queueRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  font-size: var(--t-sm);
+}
+
+.queueName {
+  text-transform: capitalize;
+}
+
+.queueNum {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-secondary);
+}
+
+.queueDlq {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+}
+
+.dlqClear {
+  color: var(--text-muted);
+}
+
+.dlqProblem {
+  color: var(--critical-text);
+  font-weight: var(--w-semi);
+}
+
+/* ── empty feed ───────────────────────────────────────────────────────── */
+.paused {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-4);
+  border-top: 1px solid var(--border);
+  background: var(--warning-muted);
+  font-size: var(--t-xs);
+  color: var(--warning-text);
+}
+
+/* Context for the shared-queue figures above them. */
+.queueNote {
+  padding: var(--s-3) var(--s-4) 0;
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+}

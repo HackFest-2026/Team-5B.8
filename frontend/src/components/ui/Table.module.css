@@ -1,0 +1,147 @@
+/* Horizontal scroll lives on a wrapper, so a wide table scrolls itself instead
+   of making the whole page scroll sideways. */
+.wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  font-size: var(--t-sm);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-sunken);
+  padding: var(--s-2) var(--s-4);
+  text-align: left;
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.clickable tbody tr {
+  cursor: pointer;
+  transition: background-color var(--d-fast) var(--e-out);
+}
+
+.clickable tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* The row the detail panel is currently showing. */
+.selected {
+  background: var(--accent-muted) !important;
+}
+
+/* Numbers right-align so magnitudes compare at a glance; tabular figures keep
+   the digits in columns. */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-secondary);
+}
+
+.muted {
+  color: var(--text-secondary);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Long free text in a dense row: clip rather than wrap, so row heights stay
+   uniform and the table stays scannable. */
+.truncate {
+  max-width: 28ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.right {
+  text-align: right;
+}
+
+/* A new row arriving on a live feed. */
+.streamIn {
+  animation: stream-in var(--d-base) var(--e-out);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}
+
+/* ── sortable headers ─────────────────────────────────────────────────── */
+.sortable {
+  padding: 0;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  width: 100%;
+  padding: var(--s-2) var(--s-4);
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.sortBtn:hover {
+  color: var(--text);
+}
+
+/* Right-aligned columns need the button's content pushed right too, or the
+   header detaches from the numbers underneath it. */
+.num .sortBtn {
+  justify-content: flex-end;
+}
+
+.sortOn {
+  color: var(--accent);
+}
+
+/* The inactive affordance is nearly invisible until hover — a column of dark
+   grey chevrons on every header is noise at table density. */
+.sortOff {
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--e-out);
+}
+
+.sortBtn:hover .sortOff {
+  opacity: 0.45;
+}

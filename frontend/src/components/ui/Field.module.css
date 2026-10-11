@@ -1,0 +1,272 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  color: var(--text);
+}
+
+.optional {
+  font-size: var(--t-xs);
+  font-weight: var(--w-normal);
+  color: var(--text-muted);
+}
+
+/* Help text sits ABOVE the control, not below. Below, it is read after the
+   field has already been filled in, which is too late to be help. */
+.hint {
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-snug);
+}
+
+.control {
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--s-3);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-size: var(--t-sm);
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+}
+
+.control::placeholder {
+  color: var(--text-muted);
+}
+
+.control:hover:not(:disabled):not(:focus) {
+  border-color: var(--text-muted);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-muted);
+}
+
+.control:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+.invalid {
+  border-color: var(--critical);
+}
+
+.invalid:focus {
+  border-color: var(--critical);
+  box-shadow: 0 0 0 3px var(--critical-muted);
+}
+
+.textarea {
+  height: auto;
+  min-height: 84px;
+  padding: var(--s-3);
+  line-height: var(--lh-normal);
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Numeric inputs get tabular figures and lose the spinners: the arrows are
+   unusable at this size and invite nudging a price by one. */
+.numeric {
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.numeric::-webkit-outer-spin-button,
+.numeric::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+}
+
+/* ── select ───────────────────────────────────────────────────────────── */
+.selectWrap {
+  position: relative;
+  display: flex;
+}
+
+.select {
+  appearance: none;
+  padding-right: var(--s-7);
+  cursor: pointer;
+}
+
+.selectChevron {
+  position: absolute;
+  right: var(--s-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-muted);
+}
+
+/* ── prefix (currency symbol, units) ──────────────────────────────────── */
+.withPrefix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.prefix {
+  position: absolute;
+  left: var(--s-3);
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.withPrefix .control {
+  padding-left: calc(var(--s-3) * 2 + var(--affix-start, 1ch));
+  padding-right: calc(var(--s-3) * 2 + var(--affix-end, 0ch));
+}
+
+.suffix {
+  position: absolute;
+  right: var(--s-3);
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* ── validation message ───────────────────────────────────────────────── */
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--t-xs);
+  color: var(--critical-text);
+}
+
+/* ── search box ───────────────────────────────────────────────────────── */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--s-3);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search .control {
+  padding-left: calc(var(--s-3) + 20px);
+}
+
+/* ── checkbox / switch ────────────────────────────────────────────────── */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  cursor: pointer;
+}
+
+.checkBox {
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-sunken);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.check input:checked + .checkBox {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+}
+
+.check input:focus-visible + .checkBox {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.check input:disabled + .checkBox {
+  background: var(--disabled-bg);
+  border-color: var(--border);
+}
+
+.checkLabel {
+  font-size: var(--t-sm);
+}
+
+.checkHint {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── layout ───────────────────────────────────────────────────────────── */
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--s-4);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* ── segmented control (time ranges) ──────────────────────────────────── */
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  gap: 2px;
+}
+
+.segment {
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  color: var(--text-muted);
+  transition:
+    background-color var(--d-fast) var(--e-out),
+    color var(--d-fast) var(--e-out);
+}
+
+.segment:hover:not(.segmentActive) {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.segmentActive {
+  background: var(--surface-active);
+  color: var(--text);
+}

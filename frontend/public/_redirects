@@ -1,0 +1,12 @@
+# SPA history fallback.
+#
+# The app uses real paths (/app/live, /app/decisions), not hash routing, so a
+# hard refresh or a pasted deep link asks the host for a file that does not
+# exist. Without this rule Cloudflare Pages answers 404 and the user sees
+# nothing — the one routing bug that only ever shows up in production.
+#
+# Status 200, not 301: the browser must keep the URL it asked for so the router
+# can read it. A redirect would rewrite the address bar to "/" and lose the page.
+# Real assets are served before this rule is consulted, so it does not shadow
+# anything in /assets.
+/*    /index.html   200

@@ -1,0 +1,19 @@
+# DevNexus backend — Lambda runtime deps.
+# boto3/botocore are provided by the Lambda Python runtime; not pinned here
+# on purpose so we don't ship ~15MB of duplicate SDK into every bundle.
+
+fastapi>=0.115,<1.0
+mangum>=0.19,<1.0           # ASGI -> Lambda adapter
+pydantic>=2.9,<3.0
+httpx>=0.27,<1.0            # async HTTP for Gemini (keep-alive pooling)
+
+# FCM HTTP v1 needs a service-account -> OAuth token exchange, which means
+# RS256 signing. google-auth owns key parsing, clock skew and refresh; doing it
+# by hand would mean owning all three.
+google-auth>=2.35,<3.0
+requests>=2.32,<3.0         # transport google-auth uses to refresh credentials
+
+# Excel parsing in the data worker. data_worker imports this for .xlsx/.xls
+# uploads; without it those jobs failed to parse, and because the failure
+# escaped before the job row was updated they hung in "processing" forever.
+openpyxl>=3.1,<4.0

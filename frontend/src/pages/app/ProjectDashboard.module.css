@@ -1,0 +1,122 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Project dashboard — the tabbed evidence panel
+   ------------------------------------------------------------------------
+   Live activity and the decision log are both long. Stacking them under the
+   summary would push the first useful fact two screens down, so they share
+   one panel and the user picks which evidence they want.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--s-1);
+  padding: 0 var(--s-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 46px;
+  padding: 0 var(--s-4);
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+  color: var(--text-muted);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.tab:hover { color: var(--text-secondary); }
+
+/* The marker sits on the shared border, so the active tab reads as part of the
+   panel below it rather than a button floating above it. */
+.tabOn {
+  color: var(--text);
+  font-weight: var(--w-semi);
+}
+
+.tabOn::after {
+  content: '';
+  position: absolute;
+  left: var(--s-3);
+  right: var(--s-3);
+  bottom: -1px;
+  height: 2px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.tabBody {
+  padding: var(--s-5);
+}
+
+@media (max-width: 640px) {
+  .tabs { padding-inline: var(--s-2); }
+  .tab { padding-inline: var(--s-3); }
+  .tabBody { padding: var(--s-4); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Status facts
+   ------------------------------------------------------------------------
+   Four short facts in a row read as one run-on string when they are only a
+   12px gap apart. Hairline dividers and real breathing room make each one a
+   separate thing to look at.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.facts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  padding: var(--s-4) var(--s-5);
+}
+
+.factList {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  padding-right: var(--s-6);
+  border-right: 1px solid var(--border);
+}
+
+/* No trailing rule: a divider with nothing after it is just a stray line. */
+.fact:last-child {
+  padding-right: 0;
+  border-right: none;
+}
+
+.factLabel {
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.factValue {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-base);
+  font-weight: var(--w-semi);
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 780px) {
+  .factList { gap: var(--s-4); }
+  .fact { padding-right: var(--s-4); }
+}

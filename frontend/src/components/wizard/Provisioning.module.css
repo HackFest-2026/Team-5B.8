@@ -1,0 +1,147 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Provisioning
+   ------------------------------------------------------------------------
+   A short, confident beat between configuring and testing. The motion is one
+   idea — something radiating outward from a centre — so it reads as a thing
+   being switched on rather than a loading spinner with extra steps.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-5);
+  padding: var(--s-6) 0;
+}
+
+/* ── the orb ──────────────────────────────────────────────────────────── */
+.orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+}
+
+.orbCore {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--accent-border);
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+/* Two rings a beat apart, so the pulse has a rhythm instead of a loop. */
+.orbRing {
+  position: absolute;
+  inset: 18px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: radiate 2.4s var(--e-out) infinite;
+}
+
+.orbRing:nth-of-type(2) { animation-delay: 1.2s; }
+
+@keyframes radiate {
+  0%   { transform: scale(0.72); opacity: 0.65; }
+  100% { transform: scale(1.75); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbRing { animation: none; opacity: 0.22; transform: scale(1.3); }
+}
+
+/* ── copy ─────────────────────────────────────────────────────────────── */
+.title {
+  font-size: var(--t-lg);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.028em;
+}
+
+.lead {
+  margin-top: var(--s-2);
+  max-width: 48ch;
+  margin-inline: auto;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+/* ── stages ───────────────────────────────────────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+  max-width: 460px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  text-align: left;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  color: var(--text-muted);
+  transition:
+    color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out);
+}
+
+.rowActive { background: var(--surface-raised); color: var(--text-secondary); }
+
+.rowDone {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  transition:
+    border-color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out),
+    color var(--d-base) var(--e-out);
+}
+
+.rowDone .mark {
+  border-color: transparent;
+  background: var(--success);
+  color: var(--text-inverse);
+}
+
+.rowActive .mark { border-color: var(--accent); color: var(--accent-text); }
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--t-sm);
+  font-weight: var(--w-medium);
+}
+
+.detail {
+  font-size: var(--t-xs);
+  color: var(--text-muted);
+}

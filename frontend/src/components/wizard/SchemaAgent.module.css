@@ -1,0 +1,308 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Schema assistant — floating bubble + chat panel
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* The launcher: a small circular chip, with a proactive message floating to
+   its left so the assistant offers help before it is ever pressed. */
+.launcher {
+  position: fixed;
+  right: var(--s-6);
+  bottom: var(--s-6);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  /* Ease into the corner on mount so a step change doesn't make it pop and
+     jump — it arrives, then settles into the bounce. */
+  animation: launcherIn 320ms var(--e-out) both;
+}
+
+@keyframes launcherIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The circular chip — icon only, gently bouncing so it reads as "alive". */
+.bubble {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+  color: var(--text-inverse);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 45%, transparent), var(--shadow-lg);
+  overflow: hidden;
+  /* Starts only after the launcher has eased in, so the two don't fight. */
+  animation: chipBounce 2.8s var(--e-out) 420ms infinite;
+  transition: transform var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out);
+}
+
+.bubble:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px) scale(1.05);
+}
+
+@keyframes chipBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* A slow breathing sheen so it reads as "alive and listening". */
+.bubbleGlow {
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 60%);
+  animation: breathe 3.6s var(--e-out) infinite;
+  pointer-events: none;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.25; transform: scale(0.9); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* The proactive message bubble beside the chip, with a little tail. */
+.callout {
+  position: relative;
+  max-width: 220px;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md, var(--shadow-lg));
+  color: var(--text);
+  font-size: var(--t-xs);
+  line-height: var(--lh-snug);
+  cursor: pointer;
+  animation: calloutIn var(--d-med, 240ms) var(--e-out) both;
+}
+
+.callout::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.calloutDismiss {
+  margin-left: var(--s-2);
+  color: var(--text-muted);
+  font-weight: var(--w-semi);
+}
+
+@keyframes calloutIn {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.bubbleLabel { display: none; }
+
+@media (max-width: 560px) {
+  .callout { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble { animation: none; }
+}
+
+/* ── panel ────────────────────────────────────────────────────────────── */
+.panel {
+  position: fixed;
+  right: var(--s-6);
+  bottom: var(--s-6);
+  z-index: var(--z-modal, 1000);
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  max-width: calc(100vw - var(--s-8));
+  height: 560px;
+  max-height: calc(100vh - var(--s-9));
+  border-radius: var(--r-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: rise 0.22s var(--e-out);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 560px) {
+  .panel { right: var(--s-3); bottom: var(--s-3); left: var(--s-3); width: auto; }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.headTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-full);
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+
+.dot { width: 7px; height: 7px; border-radius: var(--r-full); }
+.dotOn { background: var(--success); }
+.dotOff { background: var(--text-muted); }
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+}
+.close:hover { background: var(--surface-active); color: var(--text); }
+
+/* ── messages ─────────────────────────────────────────────────────────── */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+}
+
+.msg {
+  max-width: 88%;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-lg);
+  font-size: var(--t-sm);
+  line-height: var(--lh-snug);
+}
+
+.msgAssistant {
+  align-self: flex-start;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: var(--r-sm);
+}
+
+.msgUser {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-bottom-right-radius: var(--r-sm);
+}
+
+.msgText { display: flex; flex-direction: column; gap: 2px; }
+
+.bullet { display: flex; gap: var(--s-2); padding-left: 2px; }
+.bulletDot { color: var(--accent-text); flex: none; }
+.gap { height: var(--s-2); }
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  padding: 1px 4px;
+  border-radius: var(--r-sm);
+  background: var(--surface-active);
+}
+
+.msgUser .code { background: rgba(0, 0, 0, 0.18); }
+
+.applied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--border);
+}
+
+.appliedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px var(--s-2);
+  border-radius: var(--r-full);
+  background: var(--success-muted);
+  color: var(--success-text);
+  font-size: var(--t-xs);
+  font-weight: var(--w-medium);
+}
+
+/* ── typing dots ──────────────────────────────────────────────────────── */
+.typing { display: inline-flex; gap: 4px; align-items: center; padding: var(--s-1) 0; }
+.typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--text-muted);
+  animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+
+/* ── composer ─────────────────────────────────────────────────────────── */
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+.input {
+  flex: 1;
+  resize: none;
+  max-height: 120px;
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: var(--t-sm);
+  font-family: inherit;
+  line-height: var(--lh-snug);
+}
+
+.input:focus { outline: 2px solid var(--focus-ring); outline-offset: -1px; }
+
+.send {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--text-inverse);
+  transition: background-color var(--d-fast) var(--e-out);
+}
+.send:disabled { opacity: 0.5; cursor: not-allowed; }
+.send:not(:disabled):hover { background: var(--accent-hover); }
